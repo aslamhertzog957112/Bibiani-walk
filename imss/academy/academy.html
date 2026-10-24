@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="IMSS Academy">
+<meta name="theme-color" content="#0E2A23">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<title>IMSS Academy — Mining Security School of Excellence</title>
+<style>
+:root{--g:#0E2A23;--g2:#17453A;--brass:#C9A227;--brass2:#E6C45A;--sand:#F4F1EA;--card:#fff;--txt:#141414;--mut:#5f6b66;--ok:#1e8449;--warn:#b7791f;--bad:#b03a2e;--line:#dde3df}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--sand);color:var(--txt);font-family:Arial,Helvetica,sans-serif;font-size:16px}
+body{padding-bottom:calc(74px + env(safe-area-inset-bottom))}
+header{background:var(--g);color:#fff;padding:calc(8px + env(safe-area-inset-top)) 14px 8px;position:sticky;top:0;z-index:20;border-bottom:3px solid var(--brass);display:flex;align-items:center;gap:10px}
+header svg{width:38px;height:38px;flex:none}
+header .brand b{font-size:15px;letter-spacing:1.5px;display:block}
+header .brand small{color:var(--brass2);font-size:10.5px;letter-spacing:.5px}
+header .who{margin-left:auto;font-size:11px;text-align:right;color:var(--brass2)}
+main{padding:12px}
+.view{display:none}.view.active{display:block}
+.card{background:var(--card);border-radius:12px;padding:14px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.card h2{font-size:13px;margin:0 0 10px;color:var(--g);text-transform:uppercase;letter-spacing:.8px;border-left:4px solid var(--brass);padding-left:8px}
+label{display:block;font-size:12px;color:var(--mut);margin:10px 0 4px;font-weight:bold}
+input[type=text],input[type=number],select,textarea{width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;font-size:16px;background:#fff;font-family:inherit}
+textarea{min-height:90px;font-family:Menlo,monospace;font-size:13px}
+.row{display:flex;gap:8px}.row>*{flex:1}
+.btn{display:block;width:100%;padding:14px;border:0;border-radius:10px;font-size:16px;font-weight:bold;background:var(--g);color:#fff;margin-top:10px;font-family:inherit}
+.btn.brass{background:var(--brass);color:var(--g)}.btn.ghost{background:#fff;color:var(--g);border:2px solid var(--g)}.btn.sm{padding:9px;font-size:14px;margin-top:6px}.btn.red{background:var(--bad)}
+.pill{display:inline-block;padding:3px 9px;border-radius:12px;font-size:11px;font-weight:bold;background:#e6ebe8;color:var(--g);margin:2px 4px 2px 0}
+.pill.brass{background:var(--brass);color:var(--g)}.pill.ok{background:#dff3e6;color:var(--ok)}.pill.bad{background:#fbe3e0;color:var(--bad)}.pill.warn{background:#fff0d1;color:var(--warn)}
+.item{padding:12px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:8px}.item:last-child{border-bottom:0}
+.item .t{font-weight:bold;font-size:15px}.item .s{font-size:12px;color:var(--mut)}
+.mod{border-left:4px solid var(--brass);background:#fdf9ee;padding:10px;border-radius:8px;margin:8px 0;font-size:13.5px}
+.mod b{color:var(--g)}
+.scen{background:var(--g2);color:#fff;border-radius:10px;padding:14px;font-size:14.5px;line-height:1.45}
+.scen b{color:var(--brass2)}
+iframe{width:100%;height:78vh;border:2px solid var(--g);border-radius:10px;background:#fff}
+.fb{padding:8px 10px;border-bottom:1px solid var(--line);font-size:14px;display:flex;gap:8px;align-items:flex-start}.fb .m{font-weight:bold;flex:none;width:22px}
+.score{font-size:40px;font-weight:bold;color:var(--g);text-align:center}.score small{display:block;font-size:12px;color:var(--mut);font-weight:normal}
+.opt{display:block;padding:12px;border:1.5px solid var(--line);border-radius:8px;margin:6px 0;font-size:15px;background:#fff}
+.opt.sel{border-color:var(--g);background:#e6ebe8}.opt.ok{border-color:var(--ok);background:#dff3e6}.opt.bad{border-color:var(--bad);background:#fbe3e0}
+.seg{display:flex;gap:4px}.seg button{flex:1;padding:9px 0;border:1.5px solid var(--line);background:#fff;border-radius:8px;font-weight:bold;font-family:inherit;color:var(--mut)}.seg button.on{background:var(--g);color:#fff;border-color:var(--g)}
+nav{position:fixed;bottom:0;left:0;right:0;background:var(--g);display:flex;border-top:2px solid var(--brass);padding-bottom:env(safe-area-inset-bottom);z-index:20}
+nav button{flex:1;background:none;border:0;color:#9fb3ac;padding:10px 0 8px;font-size:11px;font-family:inherit}nav button span{display:block;font-size:20px;margin-bottom:2px}nav button.active{color:var(--brass2)}
+.stat{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat div{background:var(--g);color:#fff;border-radius:10px;padding:10px;text-align:center}.stat b{display:block;font-size:24px;color:var(--brass2)}.stat small{font-size:10px;text-transform:uppercase}
+table{width:100%;border-collapse:collapse;font-size:12px}th,td{border:1px solid var(--line);padding:5px;text-align:left;vertical-align:top}th{background:var(--g);color:#fff}
+.toast{position:fixed;left:12px;right:12px;bottom:90px;background:var(--g);color:#fff;padding:12px;border-radius:10px;text-align:center;z-index:50;display:none;font-size:14px;border-left:4px solid var(--brass)}
+.mut{color:var(--mut);font-size:12px}hr{border:0;border-top:1px solid var(--line);margin:10px 0}
+.cert{border:6px double var(--brass);padding:24px;text-align:center;background:#fff}
+@media print{body{padding:0;background:#fff}header,nav,.noprint{display:none!important}main{padding:0}.view{display:none}#view-reg{display:block}.card{box-shadow:none}}
+</style>
+</head>
+<body>
+<header>
+  <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 3 8 13v18c0 15 10 26 24 30 14-4 24-15 24-30V13Z" fill="#C9A227"/><path d="M32 9 14 16.5V31c0 12 7.5 21 18 24.5C42.5 52 50 43 50 31V16.5Z" fill="#0E2A23"/><path d="M22 36l7-15 3 7 3-7 7 15h-4l-6-12-3 7-3-7-6 12Z" fill="#E6C45A"/><circle cx="32" cy="41" r="3" fill="#E6C45A"/></svg>
+  <div class="brand"><b>IMSS ACADEMY</b><small>MINING SECURITY SCHOOL OF EXCELLENCE</small></div>
+  <div class="who" id="who">no trainee</div>
+</header>
+<main>
+
+<section class="view active" id="view-home">
+  <div class="card"><h2>Trainee</h2>
+    <select id="t_sel" onchange="pickTrainee()"></select>
+    <div class="row"><input type="text" id="t_new" placeholder="New trainee name"><select id="t_lvl" style="max-width:110px"><option>L1</option><option>L2</option><option>L3</option><option>L4</option><option>L5</option></select></div>
+    <button class="btn ghost sm" onclick="addTrainee()">+ ADD TRAINEE</button>
+  </div>
+  <div class="card"><h2>Standing</h2><div id="standing"><p class="mut">Select a trainee.</p></div></div>
+  <div class="card"><h2>Quick start</h2>
+    <button class="btn brass" onclick="go('drill')">▶ RUN A DRILL</button>
+    <button class="btn" onclick="go('test')">✎ TAKE A TEST</button>
+    <button class="btn ghost sm" onclick="go('learn')">📖 LEARN</button>
+  </div>
+</section>
+
+<section class="view" id="view-learn">
+  <div class="card"><h2>Levels</h2><div class="seg" id="lvlseg"></div></div>
+  <div id="modules"></div>
+  <div class="card"><h2>App walkthroughs</h2>
+    <div class="mod"><b>Field Assessment (walk)</b> — Zone of operation → pin each Gold Code point → photo → score 0–5 against the standard legend → BOQ → report. Score only what you can evidence; a 5 means compliant with the written standard, not "looks fine".</div>
+    <div class="mod"><b>Plant Sample Capture</b> — Pin → Gold Code section → mark every control ✓/✗/N/A → threat indicators → 2 photos (wide + close with tag) → Material Class → read the routing card → mass, container, <b>seal number</b>, seal confirmed, witness → sign. The seal and the signature are zero-defect items.</div>
+    <div class="mod"><b>Incident Capture</b> — Class and severity → occurrence window <i>from/to</i> (not the discovery time) → section → barriers Held / Failed / Bypassed / Absent → key barrier → facts only, persons by role → plant conditions → link samples → recovered material sealed → sign. You do not pick a hypothesis.</div>
+  </div>
+</section>
+
+<section class="view" id="view-drill">
+  <div class="card noprint" id="drillpick"><h2>Scenario</h2>
+    <label>Filter</label><select id="d_app" onchange="listScen()"><option value="">All apps</option><option value="samples">Plant Sample Capture</option><option value="incident">Incident Capture</option><option value="assess">Field Assessment scoring</option></select>
+    <div id="scenlist"></div>
+  </div>
+  <div id="drillrun" style="display:none">
+    <div class="card"><div class="scen" id="scentext"></div><button class="btn ghost sm" onclick="abortDrill()">✕ ABORT DRILL</button></div>
+    <div id="frameWrap"></div>
+    <div id="assessWrap"></div>
+  </div>
+  <div id="drillresult" style="display:none"></div>
+</section>
+
+<section class="view" id="view-test">
+  <div class="card noprint" id="testpick"><h2>Knowledge test</h2>
+    <label>Module</label><select id="q_mod"></select>
+    <label>Questions</label><select id="q_n"><option>10</option><option>20</option><option>All</option></select>
+    <button class="btn brass" onclick="startTest()">START</button>
+  </div>
+  <div id="testrun" style="display:none"></div>
+  <div id="testresult" style="display:none"></div>
+</section>
+
+<section class="view" id="view-reg">
+  <div class="card noprint"><h2>Register</h2>
+    <div class="stat"><div><b id="r_n">0</b><small>Trainees</small></div><div><b id="r_c">0</b><small>Current certs</small></div><div><b id="r_d">0</b><small>Decay triggers</small></div></div>
+    <div id="reglist"></div>
+    <button class="btn ghost sm" onclick="exportReg()">⬇ EXPORT REGISTER (Guardian JSON)</button>
+    <button class="btn ghost sm" onclick="exportCSV()">⬇ EXPORT CSV</button>
+  </div>
+  <div id="certbox"></div>
+</section>
+
+<section class="view" id="view-author">
+  <div class="card"><h2>Author (L5)</h2>
+    <p class="mut">Add a scenario as JSON. Templates below. Saved scenarios join the library on this device; export/import the library to share.</p>
+    <select id="a_tpl" onchange="loadTpl()"><option value="">— template —</option><option value="samples">Sampling scenario</option><option value="incident">Incident scenario</option><option value="assess">Assessment scoring scenario</option><option value="mcq">MCQ item</option></select>
+    <textarea id="a_json" style="min-height:220px"></textarea>
+    <button class="btn" onclick="saveAuthored()">SAVE TO LIBRARY</button>
+    <button class="btn ghost sm" onclick="exportLib()">⬇ EXPORT LIBRARY</button>
+    <input type="file" id="imp" accept=".json" style="display:none" onchange="importLib(this)"><button class="btn ghost sm" onclick="document.getElementById('imp').click()">⬆ IMPORT LIBRARY</button>
+    <button class="btn red sm" onclick="if(confirm('Wipe authored scenarios and questions?')){LIB={scen:[],mcq:[]};saveLib();toast('Wiped')}">WIPE AUTHORED</button>
+  </div>
+</section>
+</main>
+
+<nav>
+  <button onclick="go('home')" id="n-home" class="active"><span>🏠</span>Home</button>
+  <button onclick="go('learn')" id="n-learn"><span>📖</span>Learn</button>
+  <button onclick="go('drill')" id="n-drill"><span>▶️</span>Drill</button>
+  <button onclick="go('test')" id="n-test"><span>✎</span>Test</button>
+  <button onclick="go('reg')" id="n-reg"><span>🎓</span>Register</button>
+  <button onclick="go('author')" id="n-author"><span>✍️</span>Author</button>
+</nav>
+<div class="toast" id="toast"></div>
+
+<script>
+if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
+/* ===== Gold Code sections (shared index order with the apps) ===== */
+const SECTIONS=[
+ {id:"14.1",name:"Mills",ctl:["Relining area demarcated with security present","Area access controlled","Pocketless overalls in use","Laundry done inside plant","Mill inlet under CCTV","Search during / after relining","Body cameras in use","Area inspected after maintenance / relining","Concentrates recycled","Spillage controlled — floors cleaned","Security informed of mill stoppages","High-grade sludge in secured area","Sumps sampled by security"]},
+ {id:"14.2",name:"Cyclone & feed pumps",ctl:["Sampling carried out","Spillages reported"]},
+ {id:"14.3",name:"Gravity concentrator (Knelson)",ctl:["Sampling points controlled / tank locked","Concentrator area secured (caged)","Gravity unit CCTV coverage","Catchment tank cage CCTV","Overflow pipe welded and under camera","Overflow box CCTV detail during cleaning","Cage locks graded, hinges secured","Overflow locks graded","Overflow spillage controlled (discharge cycle)"]},
+ {id:"15",name:"Spillage",ctl:["Crushers","Conveyors","Mill floor area","Mill outside area","Gravity catchment tank area","Thickeners","Screening — wood chips removed & sampled","Leach sumps","CIP/CIL bulk bags controlled","Carbon conditioning scrap controlled","Acid wash / elution sump","Eluant sump","Tailings sump","General housekeeping"]},
+ {id:"15a",name:"Carbon recovery & elution",ctl:["Security notified of recovery start / stop","Transfer under CCTV with VMD","Grab samples sealed, logged and witnessed","Screen cleanings / carbon fines secured and sampled","Recovery-screen run-off routed to secured sump","Carbon mass reconciled CIL → elution per recovery","Column drain valve locked when not in use","Two-person rule at recovery screen"]},
+ {id:"10",name:"Conveyor belts",ctl:["Airlock secured","Access control at airlock","Theft by passing through prevented","Locks on airlock doors","Airlock key control","Return belt scrapers","Illumination","Searching procedure at airlock","CCTV surveillance"]},
+ {id:"16.6",name:"Gold room — material control",ctl:["Airlock interlocked","Crushed slag sealed","Crushed crucible sealed","Tools limited","No acetylene","Welding controlled","Scrap sealed & escorted","Sample removal double-locked & escorted","Clearance certificates","Personal equipment in change room","Searching procedures"]},
+ {id:"16.7",name:"Electrowinning",ctl:["Cells double locked","Lock protectors","Drain valves locked","Sludge drained before reloading","Cathode baskets cleaned","Catchment tank sludge drained","Sludge filtered","Rectifiers locked"]},
+ {id:"12",name:"Access gate",ctl:["Entrance doors secured","Windows secured","Building secured","Key control","Access control system","Employee access control","Visitor access control","Permanent contractor control","Temporary contractor control","Personal equipment control (phones, firearms, tools)","Communications","Emergency reaction procedure","Restricted items control (contraband)","Metal / arc detector","Searching procedures","Security control facilities (transparent bags, cubicle, safes, lockers)"]},
+ {id:"5",name:"Locks",ctl:["Lock type adequate","Grade 3–5 minimum","Secured — 3 mm plate, hasp & staple, tamper covers","Locks inspected","Key control"]}
+];
+const sec=id=>SECTIONS.find(s=>s.id===id);
+const GPS={knelson:{lat:6.4630,lon:-2.3300},mill:{lat:6.4634,lon:-2.3306},cil:{lat:6.4625,lon:-2.3295},gr:{lat:6.4620,lon:-2.3310},gate:{lat:6.4640,lon:-2.3320}};
+
+/* ===== SEED SCENARIOS — derived from the Gold Code's known weak points, not from any site's findings ===== */
+const SEED=[
+/* --- Plant Sample Capture (4 + 1 carbon) --- */
+{id:"S-01",app:"samples",lvl:"L2",title:"Knelson overflow box after cleaning",gps:GPS.knelson,
+ text:"08:40, day shift. You arrive at the gravity concentrator. The overflow box has just been cleaned by a plant operator who has left. There is fresh dark heavy material around the lip of the box and a wet trail to the floor drain. The camera above the box is pointing at the walkway, not into the box. The cage padlock is an ungraded hardware-store lock hanging open on the hasp. A plastic 2 L bottle, half full of grey slurry, is on the floor behind the cage. Sample the overflow box.",
+ key:{secId:"14.3",ptype:["Overflow box / pipe"],ctlN:[5,6],ctlC:[1,3],ind:[0,1,3,6,8],code:"MC-1",witness:true}},
+{id:"S-02",app:"samples",lvl:"L2",title:"Mill discharge sump after unannounced stop",gps:GPS.mill,
+ text:"The SAG mill tripped at 02:15 and restarted at 03:05. Security was not told. You are tasked at 06:30 to sample the mill discharge sump. The sump has an unusually thick layer of coarse heavy material on the upstream side, more than normal build-up. A trowel is leaning against the sump wall. Floor is otherwise clean. Camera covers the sump.",
+ key:{secId:"14.1",ptype:["Sump"],ctlN:[10,12],ctlC:[9,4],ind:[2,4],code:"MC-3",witness:false}},
+{id:"S-03",app:"samples",lvl:"L2",title:"Wood-chip screen bulk bag",gps:GPS.cil,
+ text:"CIL area. A bulk bag of wood chips from the trash screen is standing at the plant road, 10 m from the service gate, tagged for removal today. Nobody has sampled it. It is not sealed. Spillage around the screen itself is normal. Take a reference sample from the bag before it leaves.",
+ key:{secId:"15",ptype:["Bulk bag / container","Screen / wood chips"],ctlN:[6,8],ctlC:[],ind:[3,9],code:"MC-5",witness:false}},
+{id:"S-04",app:"samples",lvl:"L2",title:"Electrowinning drain valve puddle",gps:GPS.gr,
+ text:"Gold room perimeter, outside the electrowinning cell room. A drain valve on the cell catchment line is unlocked and there is a grey-black puddle below it on the apron, leading to an open floor drain. Cells are double locked. You are the only person present. Sample the puddle residue.",
+ key:{secId:"16.7",ptype:["Drain / trench","Spillage"],ctlN:[2],ctlC:[0],ind:[0,5],code:"MC-6",witness:true}},
+{id:"S-05",app:"samples",lvl:"L2",title:"Carbon recovery screen during transfer",gps:GPS.cil,
+ text:"Loaded carbon is being recovered from CIL to the elution column. The operator is taking grab samples into an open plastic bag kept on the screen deck; no seals, no log. Security was not notified of the recovery. Spray-water run-off from the screen is going to an open trench. Two cameras cover the area. Take a custody sample of the loaded carbon at the screen.",
+ key:{secId:"15a",ptype:["Screen / wood chips","Launder / transfer","Other"],ctlN:[0,2,4],ctlC:[1],ind:[3,1],code:"MC-4",witness:true}},
+/* --- Incident Capture (4 + 1 carbon) --- */
+{id:"I-01",app:"incident",lvl:"L2",title:"Cache found behind Knelson cage",gps:GPS.knelson,
+ text:"At 14:20 a security officer found two 500 ml bottles of dark heavy concentrate hidden behind the Knelson catchment tank cage. Last overflow-box clean was 11:00–11:30 by the day crew; the next scheduled clean would have been 15:00. The overflow box camera does not show the inside of the box. Cage lock is ungraded and was found open. Nobody was present. Material has been sealed with seal 00471, witnessed by the shift supervisor. Record the incident.",
+ key:{cls:"Suspicious find",sevPrefix:"1",secId:"14.3",bar:{5:["F","A"],6:["F","B"],1:["H","F"]},keybar:[5,6],plant:["Knelson discharge / container change"],recovered:true,topHyp:["H1"]}},
+{id:"I-02",app:"incident",lvl:"L2",title:"Airlock search bypass",gps:GPS.gate,
+ text:"At 06:05 shift change, the hand-held detector at the main access gate was found switched off. The register shows no searches between 05:30 and 06:05 although 38 people exited. The search cubicle camera was working. A contractor was seen leaving with an unusually heavy backpack at 05:50 (role only — contractor). Nothing recovered. Record the incident.",
+ key:{cls:"Procedure breach",sevPrefix:"2",secId:"12",bar:{13:["F","B"],14:["B","F"]},keybar:[14,13],plant:["Shift change"],recovered:false,topHyp:["H6","H8"]}},
+{id:"I-03",app:"incident",lvl:"L2",title:"Mill relining — unsearched exit",gps:GPS.mill,
+ text:"Relining of the ball mill ran 22:00–04:30. Security was informed of the start but there was no security officer in the mill during the work and no search of the relining crew on exit was recorded. No body cameras in use. At 07:10 the mill-floor camera shows a person (plant employee) leaving the mill area at 04:15 carrying a lunch box. No material recovered. Record the incident.",
+ key:{cls:"Procedure breach",sevPrefix:"2",secId:"14.1",bar:{0:["F","A"],5:["F","A"],6:["A"],10:["H"]},keybar:[5,0],plant:["Relining or maintenance in progress","Night shift"],recovered:false,topHyp:["H3"]}},
+{id:"I-04",app:"incident",lvl:"L2",title:"CCTV down during power outage",gps:GPS.gr,
+ text:"Plant power failed 01:40–02:35. Plant CCTV (no UPS) was down for the full period; gold-room cameras stayed up on their generator. The control room operator did not log the outage or dispatch patrols. At 02:10 the electrowinning drain valve lock was found open by a day-shift electrician at 06:00. No material recovered. Record the incident.",
+ key:{cls:"Tamper",sevPrefix:"2",secId:"16.7",bar:{2:["F","B"],0:["H"]},keybar:[2],plant:["Plant power outage","CCTV / NVR downtime","Night shift"],recovered:false,topHyp:["H5","H8"]}},
+{id:"I-05",app:"incident",lvl:"L2",title:"Carbon fines unaccounted after screen cleaning",gps:GPS.cil,
+ text:"After a carbon recovery (09:00–11:30) the recovery screen was cleaned by the operator. The elution column received 2.1 t of carbon against 2.4 t estimated from CIL. The screen cleanings were not bagged or sampled; the deck was hosed to the trench. Security was not notified of the recovery. Record the incident.",
+ key:{cls:"Metallurgical accounting variance",sevPrefix:"2",secId:"15a",bar:{0:["F","A"],3:["F","A"],4:["F","A"],5:["F"]},keybar:[3,5],plant:["Carbon recovery to elution in progress"],recovered:false,topHyp:["H10","H0"]}},
+/* --- Field Assessment scoring (4) --- */
+{id:"A-01",app:"assess",lvl:"L3",title:"Score the gravity concentrator",items:[
+ {c:"Concentrator area secured (caged)",obs:"Knelson unit is open on the walkway side; a cage exists only around the catchment tank.",key:1},
+ {c:"Overflow pipe welded and under camera",obs:"Overflow pipe is flanged with four bolts; no camera has a view of the flange.",key:0},
+ {c:"Cage locks graded, hinges secured",obs:"Graded padlock fitted with a shroud; hinge pins welded.",key:5},
+ {c:"Overflow box CCTV detail during cleaning",obs:"A camera covers the box but at a distance; the operator's hands inside the box cannot be seen.",key:3},
+ {c:"Overflow spillage controlled (discharge cycle)",obs:"Discharge cycle every 60 min; visible spillage on the floor after each cycle is washed to drain.",key:1}]},
+{id:"A-02",app:"assess",lvl:"L3",title:"Score the gold-room access control",items:[
+ {c:"Walk-through metal detector",obs:"None installed; hand-held unit with manual on/off switch.",key:0},
+ {c:"Searching executed",obs:"Procedure exists; register shows 1 in 20 searched over the last week against a required 1 in 5.",key:2},
+ {c:"Clean / dirty change house",obs:"Separate clean and dirty sides with interlocked door and shower.",key:5},
+ {c:"Prohibited item control",obs:"Signage present; lockers available; two phones found in dirty side during the audit.",key:2}]},
+{id:"A-03",app:"assess",lvl:"L3",title:"Score the mill high-risk controls",items:[
+ {c:"Security informed of mill stoppages",obs:"No procedure; control room finds out from the production log the next day.",key:0},
+ {c:"Sumps sampled by security",obs:"Security samples the discharge sump once per shift with sealed bags and a register.",key:5},
+ {c:"Pocketless overalls in use",obs:"In use by plant employees; contractor crews wear their own overalls with pockets.",key:3},
+ {c:"Body cameras in use",obs:"Two cameras issued; neither charged; no footage retention procedure.",key:1}]},
+{id:"A-04",app:"assess",lvl:"L3",title:"Score locks on the plant",items:[
+ {c:"Grade 3–5 minimum",obs:"Mixed: graded locks on gold-room doors; ungraded brass padlocks on all plant cages and sumps.",key:2},
+ {c:"Secured — 3 mm plate, hasp & staple, tamper covers",obs:"Hasps are standard, screwed to the frame; no covers.",key:1},
+ {c:"Locks inspected",obs:"Random inspection by the supervisor, no record.",key:2},
+ {c:"Key control",obs:"Key safe with register, dual control for gold room keys, single control for plant keys.",key:4}]}
+];
+/* ===== MCQ bank (module-coded) ===== */
+const MCQ=[
+ {m:"F-01",q:"In the criminal typology used by IMSS, what follows 'collection means' and 'caching opportunity'?",o:["Prosecution","Diversion and exfiltration route","Insurance claim","Assay"],a:1},
+ {m:"F-01",q:"Why do spillage points matter more than the gold room for day-to-day theft?",o:["Spillage is worthless","They are process-generated, repeated, and outside the strongest controls","Gold room has no cameras","Spillage is always sampled"],a:1},
+ {m:"F-02",q:"In the Gold Code legend, a score of 5 means:",o:["Very poor","Good","Compliant with the written standard","Not applicable"],a:2},
+ {m:"F-02",q:"A control that is not provided at all is scored:",o:["1","0","N/A","3"],a:1},
+ {m:"F-02",q:"Which Gold Code section covers the Knelson overflow box?",o:["§14.1 Mills","§14.3 Gravity concentrator","§16.6 Material control","§12 Access gate"],a:1},
+ {m:"F-03",q:"Which of these breaks a chain of custody?",o:["A second person witnesses the sealing","A handover is logged without checking the seal","Photos are stamped with GPS","The collector signs"],a:1},
+ {m:"F-03",q:"The minimum photographs for a sample are:",o:["One of the sample bag","A wide shot in context and a close-up with the sample ID tag","Three from different angles","None if GPS is recorded"],a:1},
+ {m:"F-03",q:"Recovered GBM should be routed to:",o:["The Met Lab for immediate assay","The Security Evidence Room, sealed, under dual control","The plant manager's office","The gold room safe"],a:1},
+ {m:"F-04",q:"In the field apps, persons involved in an incident are recorded by:",o:["Full name and employee number","Photograph","Role only","National ID"],a:2},
+ {m:"F-04",q:"Informer information received by an operator should be:",o:["Typed into the Incident app narrative","Passed to the analyst channel, not recorded in the operator tool","Posted in the shift WhatsApp group","Ignored"],a:1},
+ {m:"F-04",q:"Which law governs personal data recorded at a Ghanaian mine?",o:["POPIA","Ghana Data Protection Act 2012","GDPR only","L.I. 2182 only"],a:1},
+ {m:"F-05",q:"The apps keep their data:",o:["On IMSS servers automatically","On the device only, until the JSON backup is exported","In iCloud","In the plant control system"],a:1},
+ {m:"L1-01",q:"Dark, heavy fines concentrated at the lip of an overflow box after cleaning indicate:",o:["Normal process-liquid","Possible high-grade concentrate left for later collection","Rust","Nothing — overflow boxes are always dirty"],a:1},
+ {m:"L1-01",q:"A half-full plastic bottle of grey slurry found behind a cage is:",o:["Litter","A collection means — report and sample","A sample taken by Met","Evidence of good housekeeping"],a:1},
+ {m:"L1-02",q:"Which is NOT a listed high-risk sampling point?",o:["Wood-chip screen","Knelson catchment tank","Electrowinning drain valve","Main office car park"],a:3},
+ {m:"L1-03",q:"A mill stoppage that security is not told about creates:",o:["A production delay only","An unsupervised access window to the mill interior and sumps","No security concern","A safety issue only"],a:1},
+ {m:"L1-04",q:"A hand-held detector with a manual on/off switch is weak because:",o:["It is too sensitive","Its operation depends entirely on the honesty and diligence of the searcher","It cannot detect gold","It needs calibration daily"],a:1},
+ {m:"L1-05",q:"The incident 'occurrence window' is:",o:["The time you discovered it","The earliest and latest times it could have happened","The shift name","The time you saved the record"],a:1},
+ {m:"L2-02",q:"Material Class MC-1 (visible gold / gravity concentrate) is routed to:",o:["Met Lab routine batch","Gold Room under dual control, P1 same shift","Tailings","Workshop"],a:1},
+ {m:"L2-02",q:"A control marked ✗ Fail in the sample app means:",o:["The sample failed assay","The control, as written in the standard, was not in place at that point at that time","The operator failed","The GPS failed"],a:1},
+ {m:"L2-03",q:"When sampling a sump for evidence of concentration, take the sample from:",o:["The surface water","The settled heavy layer, recording where in the sump","Anywhere — it is all the same","The overflow"],a:1},
+ {m:"L2-04",q:"In the bow-tie, 'Bypassed' means:",o:["The control was never installed","The control existed and was deliberately defeated","The control was not applicable","The control worked"],a:1},
+ {m:"L2-04",q:"The 'key barrier' is:",o:["The most expensive control","The single control most likely to have prevented the event had it held","The first item in the list","Always CCTV"],a:1},
+ {m:"L3-01",q:"Scoring 'Compliant (5)' for a control described as 'present but reliant on the human factor' is:",o:["Correct","A miscore — human-factor reliance is at best 3–4","Required by the standard","Optional"],a:1},
+ {m:"L3-03",q:"Which combination forecasts the next incident?",o:["Low recurrence, fast closure, flat grade","Recurring failures, slow time-to-close, rising sample grade","Many samples, no results","High audit score"],a:1},
+ {m:"L3-05",q:"Which is one of the six minimum plant data feeds?",o:["Canteen menu","Mill stop/start log","Payroll","Weather"],a:1},
+ {m:"L4-01",q:"In ACH, evidence that is consistent with every hypothesis:",o:["Proves the leading hypothesis","Has no diagnostic value and should be discounted","Should be weighted double","Rejects the null"],a:1},
+ {m:"L4-01",q:"ACH ranks hypotheses by:",o:["Most supporting evidence","Least disconfirming evidence","Analyst preference","Seniority of the source"],a:1},
+ {m:"L4-01",q:"The null hypothesis (H0, no theft — accounting variance) must be:",o:["Ignored","Formally tested and rejected, not assumed away","Deleted from the matrix","Always ranked first"],a:1},
+ {m:"L4-02",q:"Hypothesis H3 is enabled mainly by failures in:",o:["§12 Access gate","§14.1 Mills — stoppage notification and sump sampling","§16.5 Vault","§1 Fences"],a:1},
+ {m:"L4-03",q:"Incident window ∩ CCTV downtime is an example of:",o:["A machine-learning model","A time-window correlation rule","A legal test","A sampling technique"],a:1},
+ {m:"L4-05",q:"Operators collecting from the overflow box, a cache behind the cage, and a waste stream exit together indicate:",o:["Random opportunism","An organised insider chain","Poor housekeeping only","A safety issue"],a:1},
+ {m:"L4-07",q:"For evidence to survive a hearing, the custody record must show:",o:["Who held it, when, with seal intact at every handover, signed","Only the final assay","A photo of the bag","The accused's name"],a:0},
+ {m:"L5-01",q:"A trainee scores 92% overall but omitted the seal number. Result:",o:["Competent","Not yet competent — zero-defect item missed","Competent with a note","Re-test knowledge only"],a:1}
+];
+const MODULES={
+ F:[["F-01","Why gold is stolen: typology and points of concentration","3h"],["F-02","The Gold Code: structure, legend, reading a control","3h"],["F-03","Evidence and chain of custody","3h"],["F-04","Lawful conduct and data protection","2h"],["F-05","Using the IMSS apps offline","2h"]],
+ L1:[["L1-01","What to look for","4h"],["L1-02","Where to look","4h"],["L1-03","How it leaves","3h"],["L1-04","Searching to standard","4h"],["L1-05","Reporting an observation in Incident Capture","3h"],["L1-06","Relining, stoppage, breakdown duties; body-cam","2h"]],
+ L2:[["L2-01","Field Assessment app","6h"],["L2-02","Plant Sample Capture","6h"],["L2-03","Sampling technique","4h"],["L2-04","Incident Capture (full)","6h"],["L2-05","Reading the AAR","2h"],["L2-06","Working with the plant","2h"]],
+ L3:[["L3-01","Scoring a Gold Code audit","6h"],["L3-02","Barrier assessment and bow-tie","4h"],["L3-03","Leading indicators","3h"],["L3-04","Control room","4h"],["L3-05","Plant data liaison","3h"],["L3-06","Shift governance","3h"]],
+ L4:[["L4-01","Analysis of Competing Hypotheses","8h"],["L4-02","IMSS mining hypothesis library","4h"],["L4-03","Correlation with plant data","6h"],["L4-04","Investigation Focus & collection management","4h"],["L4-05","Criminal typology, lawful OSINT/HUMINT","6h"],["L4-06","Guardian IMSS tenant","6h"],["L4-07","Evidence to prosecution","3h"]],
+ L5:[["L5-01","Assessment practice","8h"],["L5-02","Authoring simulator scenarios","8h"],["L5-03","Moderation and register","4h"],["L5-04","Delivering offline","4h"]]};
+const PASS={mcq:80,law:90,drill:85,validity:{L1:12,L2:12,L3:12,L4:24,L5:24}};
+
+/* ===== state ===== */
+let REG=JSON.parse(localStorage.getItem('imss_acad_reg')||'[]');
+let LIB=JSON.parse(localStorage.getItem('imss_acad_lib')||'{"scen":[],"mcq":[]}');
+let T=null,cur=null,assessAns=[],test=null;
+const $=id=>document.getElementById(id);
+const saveReg=()=>localStorage.setItem('imss_acad_reg',JSON.stringify(REG));
+const saveLib=()=>localStorage.setItem('imss_acad_lib',JSON.stringify(LIB));
+const toast=m=>{const t=$('toast');t.textContent=m;t.style.display='block';setTimeout(()=>t.style.display='none',2200);};
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const allScen=()=>[...SEED,...LIB.scen];const allMcq=()=>[...MCQ,...LIB.mcq];
+function go(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));$('view-'+v).classList.add('active');document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));$('n-'+v).classList.add('active');window.scrollTo(0,0);
+ if(v==='home')renderHome();if(v==='learn')renderLearn('F');if(v==='drill'){listScen();}if(v==='test')renderTestPick();if(v==='reg')renderReg();}
+function init(){renderTrainees();const id=localStorage.getItem('imss_acad_t');if(id){T=REG.find(x=>x.id===id)||null;$('t_sel').value=id;}renderHome();addEventListener('message',onMsg);if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});}
+
+/* ===== trainees ===== */
+function renderTrainees(){$('t_sel').innerHTML='<option value="">— select —</option>'+REG.map(t=>`<option value="${t.id}">${esc(t.name)} (${t.lvl})</option>`).join('');$('who').textContent=T?`${T.name} · ${T.lvl}`:'no trainee';}
+function addTrainee(){const n=$('t_new').value.trim();if(!n)return;const t={id:'T'+Date.now().toString(36),name:n,lvl:$('t_lvl').value,site:'Bibiani',records:[],certs:[]};REG.push(t);saveReg();T=t;localStorage.setItem('imss_acad_t',t.id);$('t_new').value='';renderTrainees();$('t_sel').value=t.id;renderHome();}
+function pickTrainee(){T=REG.find(x=>x.id===$('t_sel').value)||null;localStorage.setItem('imss_acad_t',T?T.id:'');renderTrainees();renderHome();}
+function status(t){const drills=t.records.filter(r=>r.type==='drill');const last2=drills.slice(-2);const decay=last2.length===2&&last2.every(r=>r.score<70);
+ const cert=t.certs[t.certs.length-1];const current=cert&&new Date(cert.expiry)>new Date();
+ return{drills:drills.length,avg:drills.length?Math.round(drills.reduce((k,r)=>k+r.score,0)/drills.length):null,decay,cert,current,mcq:t.records.filter(r=>r.type==='mcq').length};}
+function renderHome(){renderTrainees();const b=$('standing');if(!T){b.innerHTML='<p class="mut">Select a trainee.</p>';return;}const s=status(T);
+ b.innerHTML=`<div class="stat"><div><b>${s.drills}</b><small>Drills</small></div><div><b>${s.avg??'—'}</b><small>Avg drill %</small></div><div><b>${s.mcq}</b><small>Tests</small></div></div>
+ <p style="margin-top:10px">${s.current?`<span class="pill ok">Certified ${s.cert.lvl} · expires ${s.cert.expiry.slice(0,10)}</span>`:'<span class="pill warn">Not currently certified</span>'} ${s.decay?'<span class="pill bad">DECAY TRIGGER — re-assess within 14 days</span>':''}</p>
+ ${T.records.length?`<table><tr><th>Date</th><th>Type</th><th>Item</th><th>Score</th><th></th></tr>${[...T.records].reverse().slice(0,8).map(r=>`<tr><td>${r.ts.slice(0,10)}</td><td>${r.type}</td><td>${esc(r.item)}</td><td>${r.score}%</td><td>${r.pass?'<span class="pill ok">pass</span>':'<span class="pill bad">fail</span>'}</td></tr>`).join('')}</table>`:''}`;}
+
+/* ===== learn ===== */
+function renderLearn(l){$('lvlseg').innerHTML=Object.keys(MODULES).map(k=>`<button class="${k===l?'on':''}" onclick="renderLearn('${k}')">${k==='F'?'Found.':k}</button>`).join('');
+ $('modules').innerHTML=`<div class="card"><h2>${l==='F'?'Foundation (all levels)':'Level '+l.slice(1)}</h2>${MODULES[l].map(m=>`<div class="mod"><b>${m[0]}</b> ${esc(m[1])} <span class="pill">${m[2]}</span><br><span class="mut">${allMcq().filter(q=>q.m===m[0]).length} test items · ${allScen().filter(s=>s.lvl===l).length?'scenarios available':'no scenario yet'}</span></div>`).join('')}</div>`;}
+
+/* ===== drill ===== */
+function listScen(){const f=$('d_app').value;const L=allScen().filter(s=>!f||s.app===f);const done=T?T.records.filter(r=>r.type==='drill'):[];
+ $('scenlist').innerHTML=L.map(s=>{const d=done.filter(r=>r.item===s.id);const best=d.length?Math.max(...d.map(r=>r.score)):null;return`<div class="item" onclick="startDrill('${s.id}')"><div><div class="t">${esc(s.id)} · ${esc(s.title)}</div><div class="s">${s.app==='samples'?'Plant Sample Capture':s.app==='incident'?'Incident Capture':'Field Assessment scoring'} · ${s.lvl}</div></div><div>${best!==null?`<span class="pill ${best>=PASS.drill?'ok':'bad'}">${best}%</span>`:''}›</div></div>`;}).join('')||'<p class="mut">No scenarios.</p>';}
+function startDrill(id){if(!T){toast('Select a trainee first');go('home');return;}cur=allScen().find(s=>s.id===id);
+ $('drillpick').style.display='none';$('drillresult').style.display='none';$('drillrun').style.display='block';
+ $('scentext').innerHTML=`<b>${esc(cur.id)} — ${esc(cur.title)}</b><br>${esc(cur.text||'Score each control item 0–5 against the Gold Code legend from the observation given.')}<br><br><b>Task:</b> ${cur.app==='samples'?'Record this sample in the app below exactly as you would on the plant. Photos are optional in training.':cur.app==='incident'?'Record this incident in the app below. Persons by role only.':'Enter your score for each item.'}`;
+ if(cur.app==='assess'){$('frameWrap').innerHTML='';assessAns=cur.items.map(()=>null);
+  $('assessWrap').innerHTML=`<div class="card">${cur.items.map((it,i)=>`<div style="padding:10px 0;border-bottom:1px solid var(--line)"><b>${esc(it.c)}</b><br><span class="mut">${esc(it.obs)}</span><div class="seg" id="as${i}" style="margin-top:6px">${[0,1,2,3,4,5].map(v=>`<button onclick="setAs(${i},${v})">${v}</button>`).join('')}</div></div>`).join('')}<button class="btn brass" onclick="scoreAssess()">SUBMIT SCORES</button></div>`;}
+ else{$('assessWrap').innerHTML='';localStorage.setItem('train_scenario',JSON.stringify({id:cur.id,title:cur.title,gps:cur.gps}));
+  ['train_imss_samples','train_imss_incidents'].forEach(k=>localStorage.removeItem(k));
+  const src=cur.app==='samples'?'../samples.html?mode=train&t='+Date.now():'../incident/incident.html?mode=train&t='+Date.now();
+  $('frameWrap').innerHTML=`<iframe src="${src}" allow="geolocation; camera"></iframe><p class="mut">Complete and SAVE in the app above. The Academy scores automatically when you save.</p>`;}}
+function abortDrill(){cur=null;$('drillrun').style.display='none';$('drillpick').style.display='block';$('frameWrap').innerHTML='';}
+function setAs(i,v){assessAns[i]=v;[...$('as'+i).children].forEach((b,j)=>b.className=j===v?'on':'');}
+function scoreAssess(){if(assessAns.some(v=>v===null)){toast('Score every item');return;}const fb=cur.items.map((it,i)=>{const d=Math.abs(assessAns[i]-it.key);return{ok:d<=1,txt:`${it.c}: you ${assessAns[i]}, model ${it.key}${d>1?' — outside ±1':''}`};});finish(fb,[]);}
+function onMsg(e){if(!cur||!e.data||e.data.type!=='imss-saved')return;const r=e.data.record;const k=cur.key;const fb=[],crit=[];
+ if(cur.app==='samples'){
+  fb.push({ok:r.secId===k.secId,txt:`Gold Code section: ${r.secId} (expected §${k.secId})`});
+  fb.push({ok:k.ptype.includes(r.ptype),txt:`Point type: ${r.ptype}`});
+  const s=sec(k.secId);k.ctlN.forEach(i=>fb.push({ok:r.ctl[i]==='N',txt:`Control should be FAIL — ${s.ctl[i]} (you: ${r.ctl[i]||'—'})`}));
+  k.ctlC.forEach(i=>fb.push({ok:r.ctl[i]==='C',txt:`Control should be COMPLIANT — ${s.ctl[i]} (you: ${r.ctl[i]||'—'})`}));
+  const wrongN=r.ctl.map((v,i)=>v==='N'&&!k.ctlN.includes(i)?i:null).filter(x=>x!==null);if(wrongN.length)fb.push({ok:false,txt:`Marked FAIL without evidence: ${wrongN.map(i=>s.ctl[i]).join('; ')}`});
+  const IND=["Visible gold","Fresh spillage","Accumulation","Containers","Tools","Diverted drain","Tamper","Unauthorised person","CCTV blind spot","Near exit","Panning","Repeat site"];
+  k.ind.forEach(i=>fb.push({ok:!!r.checks[i],txt:`Indicator expected: ${IND[i]}`}));
+  fb.push({ok:r.code===k.code,txt:`Material class: ${r.code} (expected ${k.code} → ${k.code==='MC-1'?'Gold Room P1':k.code==='MC-4'?'Elution supervisor, witnessed':k.code==='MC-6'?'Evidence Room':'Met Lab'})`});
+  crit.push({ok:!!(r.seal&&r.seal.trim()),txt:'Seal number recorded'});crit.push({ok:r.sealed,txt:'Seal applied confirmed'});crit.push({ok:!!r.coc[0].sig,txt:'Collector signature'});
+  if(k.witness)crit.push({ok:r.witness&&!!r.witname,txt:'Witness required for this class and recorded'});
+ }else{
+  fb.push({ok:r.cls.startsWith(k.cls),txt:`Class: ${r.cls} (expected ${k.cls})`});
+  fb.push({ok:r.sev[0]===k.sevPrefix,txt:`Severity: ${r.sev[0]} (expected ${k.sevPrefix})`});
+  fb.push({ok:r.secId===k.secId,txt:`Section: §${r.secId} (expected §${k.secId})`});
+  const s=sec(k.secId);Object.entries(k.bar).forEach(([i,ok])=>fb.push({ok:ok.includes(r.bar[i]),txt:`Barrier — ${s.ctl[i]}: ${({H:'Held',F:'Failed',B:'Bypassed',A:'Absent',X:'N/A'})[r.bar[i]]||'—'} (expected ${ok.join('/')})`}));
+  fb.push({ok:k.keybar.map(i=>s.ctl[i]).includes(r.keybar),txt:`Key barrier: ${r.keybar||'—'}`});
+  k.plant.forEach(p=>fb.push({ok:r.plant.includes(p),txt:`Plant condition expected: ${p}`}));
+  fb.push({ok:!!r.recovered===k.recovered,txt:`Recovered material: ${r.recovered?'yes':'no'} (expected ${k.recovered?'yes':'no'})`});
+  const top=(r.hyps||[]).slice(0,2).map(h=>h.id);fb.push({ok:k.topHyp.some(h=>top.includes(h)),txt:`Derived top hypotheses: ${top.join(', ')||'none'} (expected to include ${k.topHyp.join(' or ')})`});
+  crit.push({ok:r.from!==r.disc,txt:'Occurrence window distinct from discovery time'});crit.push({ok:!!r.log[0].sig,txt:'Reporter signature'});
+  const nm=(r.narr.match(/\b[A-Z][a-z]+ [A-Z][a-z]+\b/g)||[]).filter(x=>!/^(Gold|Security|Shift|Evidence|Control|Plant|Day|Night|Main|Knelson|Ball|Mill|Carbon|Elution|Recovery|Catchment|Overflow|Search|Access|Service)\b/.test(x));if(nm.length)fb.push({ok:true,review:true,txt:'ASSESSOR CHECK — possible personal name(s) in narrative: '+nm.join(', ')+'. Role-only rule is zero-defect; assessor to confirm.'});
+  if(k.recovered)crit.push({ok:!!(r.recovered&&r.recovered.seal),txt:'Recovered material seal number'});
+ }
+ finish(fb,crit);}
+function finish(fb,crit){const sc=fb.filter(f=>!f.review);const n=sc.length,ok=sc.filter(f=>f.ok).length;const pct=Math.round(100*ok/n);const critFail=crit.filter(c=>!c.ok);const pass=pct>=PASS.drill&&!critFail.length;
+ T.records.push({type:'drill',item:cur.id,score:pct,pass,crit:critFail.map(c=>c.txt),ts:new Date().toISOString()});saveReg();checkCert();
+ $('drillrun').style.display='none';$('frameWrap').innerHTML='';
+ $('drillresult').style.display='block';$('drillresult').innerHTML=`<div class="card"><div class="score">${pct}%<small>${cur.id} · pass mark ${PASS.drill}% + zero-defect items</small></div><p style="text-align:center">${pass?'<span class="pill ok">COMPETENT</span>':'<span class="pill bad">NOT YET COMPETENT</span>'}</p>
+ ${crit.length?`<h2>Zero-defect items</h2>${crit.map(c=>`<div class="fb"><span class="m">${c.ok?'✅':'⛔'}</span><span>${esc(c.txt)}</span></div>`).join('')}`:''}
+ <h2 style="margin-top:12px">Item feedback</h2>${fb.map(f=>`<div class="fb"><span class="m">${f.review?'👁':f.ok?'✅':'❌'}</span><span>${esc(f.txt)}</span></div>`).join('')}
+ <button class="btn" onclick="$('drillresult').style.display='none';$('drillpick').style.display='block';listScen()">DONE</button></div>`;window.scrollTo(0,0);}
+
+/* ===== test ===== */
+function renderTestPick(){const mods=[...new Set(allMcq().map(q=>q.m))].sort();$('q_mod').innerHTML='<option value="">All modules</option>'+mods.map(m=>`<option>${m}</option>`).join('');}
+function startTest(){if(!T){toast('Select a trainee first');go('home');return;}const m=$('q_mod').value;let Q=allMcq().filter(q=>!m||q.m===m);Q=Q.sort(()=>Math.random()-.5);const n=$('q_n').value;if(n!=='All')Q=Q.slice(0,+n);
+ test={Q:Q.map(q=>{const idx=q.o.map((_,i)=>i).sort(()=>Math.random()-.5);return{...q,o:idx.map(i=>q.o[i]),a:idx.indexOf(q.a)};}),i:0,ans:[],mod:m||'ALL'};$('testpick').style.display='none';$('testresult').style.display='none';$('testrun').style.display='block';renderQ();}
+function renderQ(){const q=test.Q[test.i];$('testrun').innerHTML=`<div class="card"><p class="mut">Question ${test.i+1} of ${test.Q.length} · ${q.m}</p><p style="font-size:16px;font-weight:bold">${esc(q.q)}</p>${q.o.map((o,i)=>`<div class="opt" id="o${i}" onclick="pick(${i})">${esc(o)}</div>`).join('')}<button class="btn" id="nextq" disabled onclick="nextQ()">NEXT ▸</button></div>`;}
+function pick(i){const q=test.Q[test.i];test.ans[test.i]=i;[...document.querySelectorAll('.opt')].forEach((o,j)=>o.className='opt '+(j===q.a?'ok':j===i?'bad':''));$('nextq').disabled=false;}
+function nextQ(){test.i++;if(test.i<test.Q.length){renderQ();return;}const ok=test.Q.filter((q,i)=>test.ans[i]===q.a).length;const pct=Math.round(100*ok/test.Q.length);const law=test.mod==='F-04';const pass=pct>=(law?PASS.law:PASS.mcq);
+ T.records.push({type:'mcq',item:test.mod,score:pct,pass,ts:new Date().toISOString()});saveReg();checkCert();
+ $('testrun').style.display='none';$('testresult').style.display='block';$('testresult').innerHTML=`<div class="card"><div class="score">${pct}%<small>${test.mod} · pass mark ${law?PASS.law:PASS.mcq}%</small></div><p style="text-align:center">${pass?'<span class="pill ok">PASS</span>':'<span class="pill bad">FAIL</span>'}</p><button class="btn" onclick="$('testresult').style.display='none';$('testpick').style.display='block'">DONE</button></div>`;}
+
+/* ===== certification ===== */
+function checkCert(){if(!T)return;const lvl=T.lvl;const needDrills={L1:2,L2:4,L3:3,L4:2,L5:2}[lvl];const recent=T.records.filter(r=>new Date(r.ts)>Date.now()-90*864e5);
+ const drillsOK=new Set(recent.filter(r=>r.type==='drill'&&r.pass).map(r=>r.item)).size>=needDrills;const mcqOK=recent.some(r=>r.type==='mcq'&&r.pass&&r.item==='ALL')||new Set(recent.filter(r=>r.type==='mcq'&&r.pass).map(r=>r.item)).size>=3;
+ const s=status(T);if(drillsOK&&mcqOK&&!s.current){const exp=new Date();exp.setMonth(exp.getMonth()+PASS.validity[lvl]);T.certs.push({lvl,issued:new Date().toISOString(),expiry:exp.toISOString(),no:`IMSS-${lvl}-${Date.now().toString(36).toUpperCase()}`});saveReg();toast('Certification issued: '+lvl);}}
+
+/* ===== register ===== */
+function renderReg(){$('r_n').textContent=REG.length;$('r_c').textContent=REG.filter(t=>status(t).current).length;$('r_d').textContent=REG.filter(t=>status(t).decay).length;
+ $('reglist').innerHTML=REG.length?`<table><tr><th>Trainee</th><th>Lvl</th><th>Drills</th><th>Avg</th><th>Cert</th><th>Expiry</th><th></th></tr>${REG.map(t=>{const s=status(t);return`<tr><td>${esc(t.name)}</td><td>${t.lvl}</td><td>${s.drills}</td><td>${s.avg??'—'}</td><td>${s.current?'<span class="pill ok">yes</span>':'<span class="pill warn">no</span>'}${s.decay?' <span class="pill bad">decay</span>':''}</td><td>${s.cert?s.cert.expiry.slice(0,10):'—'}</td><td>${s.cert?`<button class="btn sm" style="margin:0;padding:6px" onclick="cert('${t.id}')">Cert</button>`:''}</td></tr>`;}).join('')}</table>`:'<p class="mut">No trainees.</p>';}
+function cert(id){const t=REG.find(x=>x.id===id);const c=t.certs[t.certs.length-1];$('certbox').innerHTML=`<div class="card cert"><div style="font-size:22px;font-weight:bold;letter-spacing:2px;color:#0E2A23">IMSS AFRICA</div><div style="color:#C9A227;font-size:11px;letter-spacing:1px;margin-bottom:18px">MINING SECURITY SCHOOL OF EXCELLENCE</div><div style="font-size:13px;color:#5f6b66">certifies that</div><div style="font-size:26px;font-weight:bold;margin:8px 0">${esc(t.name)}</div><div style="font-size:13px">has demonstrated competence as</div><div style="font-size:18px;font-weight:bold;color:#0E2A23;margin:6px 0">${({L1:'Plant Security Officer',L2:'Field Operative',L3:'Security Supervisor / Control Room',L4:'Intelligence Analyst',L5:'Instructor / Assessor'})[c.lvl]} (${c.lvl})</div><div style="font-size:12px;margin-top:12px">Tools: ${({L1:'Incident Capture (observation)',L2:'Field Assessment · Plant Sample Capture · Incident Capture',L3:'Gold Code audit scoring · Barrier assessment · AAR',L4:'Hypothesis Workbench (ACH) · Investigation Focus',L5:'Assessment · Scenario authoring'})[c.lvl]}</div><div style="font-size:12px;margin-top:6px">Certificate ${c.no} · Issued ${c.issued.slice(0,10)} · Valid to ${c.expiry.slice(0,10)} · Site: ${t.site}</div><div style="margin-top:24px;font-size:11px;color:#5f6b66">Assessed against the Gold Plant Risk &amp; Security Audit control standard (P. van Schalkwyk, used with permission). Competence is confirmed by monthly drill; this certificate lapses on a decay trigger.</div><button class="btn ghost sm noprint" onclick="window.print()">🖨 PRINT</button></div>`;window.scrollTo(0,$('certbox').offsetTop-80);}
+function dl(name,txt,type='text/plain'){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type}));a.download=name;a.click();}
+function exportReg(){dl(`imss-academy-register-${new Date().toISOString().slice(0,10)}.json`,JSON.stringify({schema:'imss.academy.v1',tenant:'IMSS',site:'Bibiani',exported:new Date().toISOString(),pass:PASS,trainees:REG}),'application/json');}
+function exportCSV(){const rows=REG.flatMap(t=>t.records.map(r=>[t.name,t.lvl,r.type,r.item,r.score,r.pass,r.ts,(r.crit||[]).join('; ')]));dl('imss-academy-records.csv',['trainee,level,type,item,score,pass,timestamp,zero_defect_failures',...rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(','))].join('\n'),'text/csv');}
+
+/* ===== author ===== */
+const TPL={samples:{id:"S-XX",app:"samples",lvl:"L2",title:"",gps:{lat:6.463,lon:-2.33},text:"What the operative sees…",key:{secId:"14.3",ptype:["Overflow box / pipe"],ctlN:[5],ctlC:[],ind:[0],code:"MC-1",witness:true}},
+ incident:{id:"I-XX",app:"incident",lvl:"L2",title:"",gps:{lat:6.463,lon:-2.33},text:"What happened…",key:{cls:"Suspicious find",sevPrefix:"1",secId:"14.3",bar:{5:["F","A"]},keybar:[5],plant:[],recovered:true,topHyp:["H1"]}},
+ assess:{id:"A-XX",app:"assess",lvl:"L3",title:"",items:[{c:"Control item text",obs:"Observation",key:3}]},
+ mcq:{m:"F-02",q:"Question?",o:["A","B","C","D"],a:1}};
+function loadTpl(){const k=$('a_tpl').value;if(k)$('a_json').value=JSON.stringify(TPL[k],null,1);}
+function saveAuthored(){try{const o=JSON.parse($('a_json').value);if(o.q){LIB.mcq.push(o);}else{if(!o.id||!o.app)throw 0;LIB.scen=LIB.scen.filter(s=>s.id!==o.id);LIB.scen.push(o);}saveLib();toast('Saved');$('a_json').value='';}catch{toast('Invalid JSON');}}
+function exportLib(){dl('imss-academy-library.json',JSON.stringify(LIB,null,1),'application/json');}
+function importLib(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{try{const o=JSON.parse(e.target.result);(o.scen||[]).forEach(s=>{LIB.scen=LIB.scen.filter(x=>x.id!==s.id);LIB.scen.push(s)});(o.mcq||[]).forEach(q=>LIB.mcq.push(q));saveLib();toast('Imported');}catch{toast('Invalid file')}};r.readAsText(f);}
+init();
+</script>
+</body>
+</html>
