@@ -195,6 +195,13 @@ table{width:100%;border-collapse:collapse;font-size:12px}th,td{border:1px solid 
 <div class="toast" id="toast"></div>
 
 <script>
+if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
+/* ===== TRAINING MODE ===== */
+const TRAIN=new URLSearchParams(location.search).get('mode')==='train';const KP=TRAIN?'train_':'';
+const LS={get:k=>localStorage.getItem(KP+k),set:(k,v)=>localStorage.setItem(KP+k,v)};
+const SCEN=(()=>{try{return JSON.parse(localStorage.getItem('train_scenario')||'null')}catch{return null}})();
+if(TRAIN){document.addEventListener('DOMContentLoaded',()=>{const h=document.querySelector('header');const b=document.createElement('div');b.style.cssText='position:fixed;top:0;left:0;right:0;z-index:30;background:#b03a2e;color:#fff;font-size:11px;text-align:center;padding:2px;letter-spacing:1px';b.textContent='TRAINING MODE — '+(SCEN?SCEN.title:'no scenario loaded');document.body.appendChild(b);h.style.paddingTop='calc(24px + env(safe-area-inset-top))';});}
+const notifyParent=(app,rec)=>{if(TRAIN&&window.parent!==window)window.parent.postMessage({type:'imss-saved',app,record:rec},'*');};
 /* ===== GOLD CODE — full control standard (descriptions only) ===== */
 const SECTIONS=[
  {id:"1",name:"Fences",ctl:["Double/triple fence (wire/concrete/mesh)","Height 2.2–3 m","Distance between fences (15 m)","Inner fence construction","Outer fence construction","Vegetation cleared between fences 1–2","Vegetation cleared between fences 2–3","VMD coverage","Buildings ≥10 m from fence"]},
@@ -211,6 +218,7 @@ const SECTIONS=[
  {id:"14.2",name:"Cyclone & feed pumps",ctl:["Sampling carried out","Spillages reported"]},
  {id:"14.3",name:"Gravity concentrator (Knelson)",ctl:["Sampling points controlled / tank locked","Concentrator area secured (caged)","Gravity unit CCTV coverage","Catchment tank cage CCTV","Overflow pipe welded and under camera","Overflow box CCTV detail during cleaning","Cage locks graded, hinges secured","Overflow locks graded","Overflow spillage controlled (discharge cycle)"]},
  {id:"15",name:"Spillage",ctl:["Crushers","Conveyors","Mill floor area","Mill outside area","Gravity catchment tank area","Thickeners","Screening — wood chips removed & sampled","Leach sumps","CIP/CIL bulk bags controlled","Carbon conditioning scrap controlled","Acid wash / elution sump","Eluant sump","Tailings sump","General housekeeping"]},
+ {id:"15a",name:"Carbon recovery & elution",ctl:["Security notified of recovery start / stop","Transfer under CCTV with VMD","Grab samples sealed, logged and witnessed","Screen cleanings / carbon fines secured and sampled","Recovery-screen run-off routed to secured sump","Carbon mass reconciled CIL → elution per recovery","Column drain valve locked when not in use","Two-person rule at recovery screen"]},
  {id:"16.1",name:"Gold room — building",ctl:["Roof secured","Walls sound","Ceiling secured","Security doors","Floors sound","Ventilation openings secured","Sump routed back & inaccessible","French drains secured"]},
  {id:"16.2",name:"Gold room — keys",ctl:["Key storage secured","Safe category 3","Steel construction","Double key / combination","Limited access","Content register","Key control","Duplicates controlled"]},
  {id:"16.3",name:"Gold room — access control",ctl:["Employee access control","Visitor permits","Contractor permits","Clean / dirty change house","Searching facilities","Prohibited item control","Walk-through metal detector","Searching executed"]},
@@ -235,16 +243,17 @@ const HYP=[
  {id:"H7",t:"Perimeter or structural breach (fence, gate, roof, pipe, trench)",sec:["1","2","6/7","16.1"],collect:["VMD alarm log for the window","Fence / gate physical inspection","Roof / drain access inspection"]},
  {id:"H8",t:"Insider collusion with security or control-room staff",sec:["3","17","19","13"],collect:["CCTV downtime vs incident window","Operator on duty and acknowledgement log","Access-level changes / override log"]},
  {id:"H9",t:"Lock / key compromise",sec:["5","16.4","2","16.2"],collect:["Lock forensic inspection","Key register & duplicate control","Lock-breaking procedure records"]},
+ {id:"H10",t:"Loaded carbon or carbon fines diverted during recovery or screen cleaning",sec:["15a","15","16.6"],collect:["Recovery log (start/stop) vs security notification log","Grab-sample custody for the recovery","Carbon mass balance CIL → elution","CCTV of recovery screen during cleaning","Drain valve lock state"]},
  {id:"H0",t:"No theft — metallurgical accounting variance or sampling error (null hypothesis)",sec:["*"],collect:["Gold-in-circuit reconciliation for the period","Assay QA/QC on the samples","Process upset log"]}
 ];
-const PLANT=["Mill stopped / restarting","Relining or maintenance in progress","Knelson discharge / container change","Plant power outage","CCTV / NVR downtime","Shift change","Night shift","Rain / flooding","Contractor crew on site","Scrap / waste removal in progress"];
+const PLANT=["Mill stopped / restarting","Relining or maintenance in progress","Knelson discharge / container change","Plant power outage","CCTV / NVR downtime","Shift change","Night shift","Rain / flooding","Contractor crew on site","Scrap / waste removal in progress","Carbon recovery to elution in progress"];
 const DEF={ops:["Operator 1","Operator 2"]};
-let S=JSON.parse(localStorage.getItem('imss_inc_settings')||'null')||DEF;
-let DB=JSON.parse(localStorage.getItem('imss_incidents')||'[]');
-const samples=()=>{try{return JSON.parse(localStorage.getItem('imss_samples')||'[]')}catch{return[]}};
+let S=JSON.parse(LS.get('imss_inc_settings')||'null')||DEF;
+let DB=JSON.parse(LS.get('imss_incidents')||'[]');
+const samples=()=>{try{return JSON.parse(LS.get('imss_samples')||'[]')}catch{return[]}};
 let step=1,gpsFix=null,photos=[],bar=[],roles=[];
 const $=id=>document.getElementById(id);
-const save=()=>{localStorage.setItem('imss_incidents',JSON.stringify(DB));localStorage.setItem('imss_inc_settings',JSON.stringify(S));};
+const save=()=>{LS.set('imss_incidents',JSON.stringify(DB));LS.set('imss_inc_settings',JSON.stringify(S));};
 const nowLocal=()=>{const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,16);};
 const toast=m=>{const t=$('toast');t.textContent=m;t.style.display='block';setTimeout(()=>t.style.display='none',2200);};
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -253,7 +262,7 @@ const BAR={H:'Held',F:'Failed',B:'Bypassed',A:'Absent',X:'N/A'};
 
 function go(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));$('view-'+v).classList.add('active');document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));const n=$('n-'+v);if(n)n.classList.add('active');window.scrollTo(0,0);if(v==='home')renderHome();if(v==='ind')renderInd();if(v==='focus')fill($('f_inc'),DB.map(i=>i.id+' — '+i.cls),DB.map(i=>i.id));if(v==='set')renderSettings();}
 function fill(sel,arr,vals){sel.innerHTML=arr.map((a,i)=>`<option value="${esc(vals?vals[i]:a)}">${esc(a)}</option>`).join('');}
-function init(){fill($('m_op'),S.ops);$('m_op').value=localStorage.getItem('imss_inc_op')||S.ops[0];$('m_op').onchange=()=>localStorage.setItem('imss_inc_op',$('m_op').value);
+function init(){fill($('m_op'),S.ops);$('m_op').value=LS.get('imss_inc_op')||S.ops[0];$('m_op').onchange=()=>LS.set('imss_inc_op',$('m_op').value);
  const net=()=>{const n=$('net');n.textContent=navigator.onLine?'ONLINE':'OFFLINE';n.className='net '+(navigator.onLine?'on':'off');};net();addEventListener('online',net);addEventListener('offline',net);
  renderHome();if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});}
 
@@ -293,6 +302,7 @@ function nextStep(){
  step++;showStep();}
 function prevStep(){step--;showStep();}
 function pin(){$('gpsbox').innerHTML='Acquiring GPS…';if(!navigator.geolocation){$('gpsbox').textContent='GPS not available';return;}
+ if(TRAIN&&SCEN&&SCEN.gps){gpsFix={lat:SCEN.gps.lat,lon:SCEN.gps.lon,acc:5,ts:new Date().toISOString()};$('gpsbox').innerHTML=`<b>LAT</b> ${gpsFix.lat.toFixed(6)}<br><b>LON</b> ${gpsFix.lon.toFixed(6)}<br><b>ACC</b> ±5 m <span style="color:#E6C45A">(simulated)</span>`;return;}
  navigator.geolocation.getCurrentPosition(p=>{gpsFix={lat:p.coords.latitude,lon:p.coords.longitude,acc:Math.round(p.coords.accuracy),ts:new Date().toISOString()};$('gpsbox').innerHTML=`<b>LAT</b> ${gpsFix.lat.toFixed(6)}<br><b>LON</b> ${gpsFix.lon.toFixed(6)}<br><b>ACC</b> ±${gpsFix.acc} m`;},e=>{$('gpsbox').textContent='GPS error: '+e.message;},{enableHighAccuracy:true,timeout:15000,maximumAge:0});}
 function addPhoto(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{const img=new Image();img.onload=()=>{const max=1200,sc=Math.min(1,max/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=img.width*sc;c.height=img.height*sc;const x=c.getContext('2d');x.drawImage(img,0,0,c.width,c.height);
  const stamp=`${nextId()} · ${new Date().toLocaleString()} · ${gpsFix?gpsFix.lat.toFixed(5)+','+gpsFix.lon.toFixed(5):'NO GPS'} · IMSS AFRICA`;x.fillStyle='rgba(14,42,35,.78)';x.fillRect(0,c.height-30,c.width,30);x.fillStyle='#E6C45A';x.font='bold 15px Arial';x.fillText(stamp,8,c.height-10);photos.push(c.toDataURL('image/jpeg',.7));renderPhotos();};img.src=e.target.result;};r.readAsDataURL(f);inp.value='';}
@@ -314,6 +324,7 @@ function deriveHyps(inc){const s=sec(inc.secId);const failed=inc.bar.map((v,i)=>
   if(h.id==='H8'&&inc.plant.some(p=>/CCTV|power outage/.test(p))){sc+=3;why.push('plant condition: CCTV / power down');}
   if(h.id==='H2'&&inc.plant.some(p=>/Scrap/.test(p))){sc+=3;why.push('plant condition: waste removal in progress');}
   if(h.id==='H6'&&inc.plant.some(p=>/Shift change/.test(p))){sc+=1;}
+  if(h.id==='H10'&&inc.plant.some(p=>/Carbon recovery/.test(p))){sc+=3;why.push('plant condition: carbon recovery in progress');}
   if(h.id==='H8'&&byp){sc+=byp;why.push(`${byp} barrier(s) deliberately bypassed`);}
   if(h.id==='H9'&&failed.some(f=>/lock|key/i.test(f))){sc+=2;why.push('lock / key barrier failed');}
   if(h.id==='H0'){sc+= /variance/i.test(inc.cls)?4:(inc.rec?0:1);why.push(inc.rec?'material recovered — weakens null':'no material recovered — null remains open');}
@@ -326,7 +337,7 @@ function saveInc(){if(!$('c_by').value.trim()){toast('Reporter required');return
   recovered:c.rec?{desc:$('c_recdesc').value,seal:$('c_recseal').value,witnessed:$('c_recwit').checked,witrole:$('c_recwitrole').value}:null,
   hyps,status:'Open',log:[{action:'Reported',by:$('c_by').value,ts:new Date().toISOString(),sig:$('sig1').toDataURL()}],created:new Date().toISOString()};
  if(inc.recovered)inc.log.push({action:'Recovered material sealed',by:$('c_by').value,ts:inc.created,note:'Seal '+inc.recovered.seal+' → Security Evidence Room'});
- DB.push(inc);save();toast('Saved '+inc.id);go('home');}
+ DB.push(inc);save();notifyParent('incident',inc);toast('Saved '+inc.id);go('home');}
 
 /* ---- detail ---- */
 function openDetail(id){const i=DB.find(x=>x.id===id);if(!i)return;const s=sec(i.secId);
