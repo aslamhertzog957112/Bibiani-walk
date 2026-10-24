@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="IMSS Incident">
+<meta name="theme-color" content="#0E2A23">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<title>IMSS Africa — Bibiani Incident Capture</title>
+<style>
+:root{--g:#0E2A23;--g2:#17453A;--brass:#C9A227;--brass2:#E6C45A;--sand:#F4F1EA;--card:#fff;--txt:#141414;--mut:#5f6b66;--ok:#1e8449;--warn:#b7791f;--bad:#b03a2e;--line:#dde3df;--red:#7a1f16}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--sand);color:var(--txt);font-family:Arial,Helvetica,sans-serif;font-size:16px}
+body{padding-bottom:calc(74px + env(safe-area-inset-bottom))}
+header{background:var(--g);color:#fff;padding:calc(8px + env(safe-area-inset-top)) 14px 8px;position:sticky;top:0;z-index:20;border-bottom:3px solid var(--red);display:flex;align-items:center;gap:10px}
+header svg{width:38px;height:38px;flex:none}
+header .brand b{font-size:15px;letter-spacing:1.5px;display:block}
+header .brand small{color:var(--brass2);font-size:10.5px;letter-spacing:.5px}
+header .net{margin-left:auto;font-size:10px;padding:3px 8px;border-radius:10px;background:#333;flex:none}
+header .net.on{background:var(--ok)} header .net.off{background:var(--bad)}
+main{padding:12px}
+.view{display:none}.view.active{display:block}
+.card{background:var(--card);border-radius:12px;padding:14px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.card h2{font-size:13px;margin:0 0 10px;color:var(--g);text-transform:uppercase;letter-spacing:.8px;border-left:4px solid var(--brass);padding-left:8px}
+label{display:block;font-size:12px;color:var(--mut);margin:10px 0 4px;font-weight:bold}
+input[type=text],input[type=number],input[type=date],input[type=datetime-local],select,textarea{width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;font-size:16px;background:#fff;font-family:inherit}
+textarea{min-height:80px}
+.row{display:flex;gap:8px}.row>*{flex:1}
+.btn{display:block;width:100%;padding:14px;border:0;border-radius:10px;font-size:16px;font-weight:bold;background:var(--g);color:#fff;margin-top:10px;font-family:inherit}
+.btn.brass{background:var(--brass);color:var(--g)}.btn.ghost{background:#fff;color:var(--g);border:2px solid var(--g)}.btn.sm{padding:9px;font-size:14px;margin-top:6px}.btn.red{background:var(--bad)}
+.ctl{padding:10px 0;border-bottom:1px solid var(--line)}.ctl:last-child{border-bottom:0}
+.ctl .q{font-size:14px;margin-bottom:6px}
+.seg{display:flex;gap:4px;flex-wrap:wrap}
+.seg button{flex:1;min-width:30%;padding:8px 0;border:1.5px solid var(--line);background:#fff;border-radius:8px;font-size:12.5px;font-weight:bold;font-family:inherit;color:var(--mut)}
+.seg button.H{background:#dff3e6;border-color:var(--ok);color:var(--ok)}
+.seg button.F{background:#fbe3e0;border-color:var(--bad);color:var(--bad)}
+.seg button.B{background:#fde9c4;border-color:var(--warn);color:var(--warn)}
+.seg button.A{background:#e8d9d7;border-color:var(--red);color:var(--red)}
+.seg button.X{background:#eee;border-color:#999;color:#555}
+.tick{display:flex;align-items:flex-start;gap:10px;padding:10px 6px;border-bottom:1px solid var(--line);font-size:14.5px}.tick:last-child{border-bottom:0}
+.tick input{width:24px;height:24px;flex:none;margin:0;accent-color:var(--g)}
+.pill{display:inline-block;padding:3px 9px;border-radius:12px;font-size:11px;font-weight:bold;background:#e6ebe8;color:var(--g);margin:2px 4px 2px 0}
+.pill.brass{background:var(--brass);color:var(--g)}.pill.ok{background:#dff3e6;color:var(--ok)}.pill.bad{background:#fbe3e0;color:var(--bad)}.pill.warn{background:#fff0d1;color:var(--warn)}.pill.red{background:var(--red);color:#fff}
+.steps{display:flex;gap:4px;margin-bottom:12px}.steps div{flex:1;height:6px;border-radius:3px;background:var(--line)}.steps div.done{background:var(--brass)}.steps div.cur{background:var(--g)}
+.stepname{font-size:12px;color:var(--mut);margin-bottom:8px}
+.gps{background:var(--g2);color:#fff;border-radius:10px;padding:12px;font-family:Menlo,monospace;font-size:13px}.gps b{color:var(--brass2)}
+.photos{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}.photos img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;border:2px solid var(--line)}
+.photos .ph{position:relative}.photos .ph span{position:absolute;top:2px;right:2px;background:var(--bad);color:#fff;border-radius:10px;width:20px;height:20px;font-size:12px;text-align:center;line-height:20px}
+.item{padding:12px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:8px}.item:last-child{border-bottom:0}
+.item .t{font-weight:bold;font-size:15px}.item .s{font-size:12px;color:var(--mut)}
+.hyp{border-left:4px solid var(--brass);background:#fdf9ee;padding:10px;border-radius:8px;margin:8px 0;font-size:13.5px}
+.hyp b{color:var(--g)}.hyp .sc{float:right;font-weight:bold;color:var(--bad)}
+.hyp ul{margin:6px 0 0;padding-left:18px}
+canvas.sig{width:100%;height:140px;border:1px dashed var(--g);border-radius:8px;background:#fff;touch-action:none}
+.coc{font-size:13px;border-left:3px solid var(--brass);padding:6px 10px;margin:6px 0;background:#fafaf7}
+nav{position:fixed;bottom:0;left:0;right:0;background:var(--g);display:flex;border-top:2px solid var(--brass);padding-bottom:env(safe-area-inset-bottom);z-index:20}
+nav button{flex:1;background:none;border:0;color:#9fb3ac;padding:10px 0 8px;font-size:11px;font-family:inherit}nav button span{display:block;font-size:20px;margin-bottom:2px}nav button.active{color:var(--brass2)}
+.stat{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat div{background:var(--g);color:#fff;border-radius:10px;padding:10px;text-align:center}.stat b{display:block;font-size:24px;color:var(--brass2)}.stat small{font-size:10px;text-transform:uppercase}
+.toast{position:fixed;left:12px;right:12px;bottom:90px;background:var(--g);color:#fff;padding:12px;border-radius:10px;text-align:center;z-index:50;display:none;font-size:14px;border-left:4px solid var(--brass)}
+table{width:100%;border-collapse:collapse;font-size:12px}th,td{border:1px solid var(--line);padding:5px;text-align:left;vertical-align:top}th{background:var(--g);color:#fff}
+.mut{color:var(--mut);font-size:12px}hr{border:0;border-top:1px solid var(--line);margin:10px 0}
+.linked{background:#eef3f0;border-radius:8px;padding:8px;font-size:13px;margin-top:6px}
+@media print{body{padding:0;background:#fff}header,nav,.noprint{display:none!important}main{padding:0}.view{display:none}#view-focus{display:block}.card{box-shadow:none;border:0;padding:0}}
+</style>
+</head>
+<body>
+<header>
+  <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 3 8 13v18c0 15 10 26 24 30 14-4 24-15 24-30V13Z" fill="#C9A227"/><path d="M32 9 14 16.5V31c0 12 7.5 21 18 24.5C42.5 52 50 43 50 31V16.5Z" fill="#0E2A23"/><path d="M22 36l7-15 3 7 3-7 7 15h-4l-6-12-3 7-3-7-6 12Z" fill="#E6C45A"/><circle cx="32" cy="41" r="3" fill="#E6C45A"/></svg>
+  <div class="brand"><b>IMSS AFRICA</b><small>INCIDENT CAPTURE · CLIENT SITE: BIBIANI</small></div>
+  <span class="net" id="net">—</span>
+</header>
+<main>
+
+<section class="view active" id="view-home">
+  <div class="card">
+    <h2>Reporting Operator</h2>
+    <label>Operator</label><select id="m_op"></select>
+    <button class="btn red" onclick="startInc()">⚠ NEW INCIDENT</button>
+  </div>
+  <div class="card"><h2>Status</h2>
+    <div class="stat"><div><b id="st_open">0</b><small>Open</small></div><div><b id="st_30">0</b><small>Last 30 days</small></div><div><b id="st_rec">0</b><small>Recurring controls</small></div></div>
+  </div>
+  <div class="card"><h2>Incidents</h2><div id="inclist"><p class="mut">None logged.</p></div></div>
+</section>
+
+<section class="view" id="view-cap">
+  <div class="steps" id="steps"></div><div class="stepname" id="stepname"></div>
+
+  <div class="card step" data-step="1">
+    <h2>1 · Classify &amp; Locate</h2>
+    <label>Incident class</label>
+    <select id="c_class"><option>GBM theft — confirmed</option><option>GBM theft — attempted</option><option>Suspicious find (cached / concealed material)</option><option>Tamper (lock, seal, grate, cage, camera)</option><option>Procedure breach</option><option>Access violation</option><option>Search / contraband find</option><option>Information received (report only)</option><option>Metallurgical accounting variance</option><option>Other</option></select>
+    <label>Severity</label>
+    <select id="c_sev"><option>1 — Critical (confirmed loss / recovered GBM)</option><option>2 — High (attempt / major control failure)</option><option>3 — Medium (procedure or single control failure)</option><option>4 — Low (observation)</option></select>
+    <div class="row"><div><label>Occurrence window — from</label><input type="datetime-local" id="c_from"></div><div><label>— to</label><input type="datetime-local" id="c_to"></div></div>
+    <label>Discovered at</label><input type="datetime-local" id="c_disc">
+    <label>Gold Code section</label><select id="c_sec" onchange="renderBarriers()"></select>
+    <label>Point descriptor</label><input type="text" id="c_pdesc" placeholder="e.g. Knelson overflow box, east side">
+    <div class="gps" id="gpsbox">Tap PIN to acquire GPS fix…</div>
+    <button class="btn ghost sm" onclick="pin()">📍 PIN LOCATION</button>
+    <button class="btn" onclick="nextStep()">NEXT ▸</button>
+  </div>
+
+  <div class="card step" data-step="2">
+    <h2>2 · Barriers (bow-tie)</h2>
+    <p class="mut" id="barhead"></p>
+    <p class="mut"><b>Held</b> = control worked · <b>Failed</b> = present but didn't work · <b>Bypassed</b> = defeated deliberately · <b>Absent</b> = not provided · N/A</p>
+    <div id="barriers"></div>
+    <label>Which single barrier would most likely have prevented this?</label><select id="c_keybar"></select>
+    <div id="recentctl"></div>
+    <div class="row"><button class="btn ghost" onclick="prevStep()">◂ BACK</button><button class="btn" onclick="nextStep()">NEXT ▸</button></div>
+  </div>
+
+  <div class="card step" data-step="3">
+    <h2>3 · Facts &amp; Evidence</h2>
+    <label>What happened (facts only — no conclusions)</label><textarea id="c_narr" placeholder="Who (by role), what, where, when, how discovered"></textarea>
+    <label>Persons involved — by role (no names in this app)</label>
+    <div class="row"><select id="c_role"><option>Plant employee</option><option>Contractor</option><option>Security officer</option><option>Supervisor / management</option><option>Visitor</option><option>Unknown / external</option></select><input type="number" id="c_rolen" placeholder="count" inputmode="numeric" style="max-width:90px"></div>
+    <button class="btn ghost sm" onclick="addRole()">+ ADD ROLE</button><div id="roles"></div>
+    <label>Plant conditions at the time</label>
+    <div id="plant"></div>
+    <label>Evidence references (CCTV camera/time, seal no., document, radio log)</label><textarea id="c_evref" placeholder="Cam 14 02:10–02:40; Seal 00342; OB 118/26"></textarea>
+    <label>Link samples (same section, last 14 days)</label><div id="samplelinks"><p class="mut">No sample records found on this device.</p></div>
+    <input type="file" id="c_photo" accept="image/*" capture="environment" style="display:none" onchange="addPhoto(this)">
+    <button class="btn brass sm" onclick="document.getElementById('c_photo').click()">📷 PHOTO</button>
+    <div class="photos" id="photos"></div>
+    <div class="row"><button class="btn ghost" onclick="prevStep()">◂ BACK</button><button class="btn" onclick="nextStep()">NEXT ▸</button></div>
+  </div>
+
+  <div class="card step" data-step="4">
+    <h2>4 · Recovered Material (if any)</h2>
+    <div class="tick"><input type="checkbox" id="c_rec" onchange="document.getElementById('recbox').style.display=this.checked?'block':'none'"><div>GBM / material recovered</div></div>
+    <div id="recbox" style="display:none">
+      <label>Description &amp; est. mass (g)</label><input type="text" id="c_recdesc">
+      <label>Tamper-evident seal no.</label><input type="text" id="c_recseal">
+      <div class="tick"><input type="checkbox" id="c_recwit"><div>Recovery witnessed (second person)</div></div>
+      <label>Witness (role)</label><input type="text" id="c_recwitrole">
+      <p class="mut">Route: Security Evidence Room — seal &amp; hold under dual control. Assay only under witnessed custody.</p>
+    </div>
+    <div class="row"><button class="btn ghost" onclick="prevStep()">◂ BACK</button><button class="btn" onclick="nextStep()">NEXT ▸</button></div>
+  </div>
+
+  <div class="card step" data-step="5">
+    <h2>5 · Hypotheses generated</h2>
+    <p class="mut">Auto-derived from the barriers you marked. For analyst ACH in Guardian — the operator does not pick a hypothesis.</p>
+    <div id="hyppreview"></div>
+    <label>Reported by</label><input type="text" id="c_by">
+    <label>Signature</label><canvas class="sig" id="sig1"></canvas><button class="btn ghost sm" onclick="clearSig('sig1')">Clear</button>
+    <div class="row"><button class="btn ghost" onclick="prevStep()">◂ BACK</button><button class="btn red" onclick="saveInc()">✔ SAVE INCIDENT</button></div>
+  </div>
+</section>
+
+<section class="view" id="view-detail"><div id="detail"></div></section>
+
+<section class="view" id="view-ind">
+  <div class="card"><h2>Leading indicators by section</h2><div id="indicators"></div></div>
+  <div class="card"><h2>Recurring control failures</h2><div id="recur"></div></div>
+</section>
+
+<section class="view" id="view-focus">
+  <div class="card noprint"><h2>Investigation Focus Report</h2>
+    <label>Incident</label><select id="f_inc"></select>
+    <label>Analyst notes</label><textarea id="f_notes"></textarea>
+    <button class="btn brass" onclick="buildFocus()">GENERATE</button>
+    <button class="btn ghost sm" onclick="window.print()">🖨 PRINT / SAVE PDF</button>
+  </div>
+  <div id="focus"></div>
+</section>
+
+<section class="view" id="view-set">
+  <div class="card"><h2>Operators (one per line)</h2><textarea id="s_ops"></textarea><button class="btn sm" onclick="saveSettings()">SAVE</button></div>
+  <div class="card"><h2>Guardian ingest</h2>
+    <p class="mut">Exports a schema-versioned package (incidents + linked samples) for the IMSS tenant on Guardian.</p>
+    <button class="btn" onclick="exportGuardian()">⬇ EXPORT GUARDIAN PACKAGE (JSON)</button>
+    <button class="btn ghost sm" onclick="exportCSV()">⬇ EXPORT CSV</button>
+    <button class="btn ghost sm" onclick="exportGeo()">⬇ EXPORT GEOJSON</button>
+    <input type="file" id="imp" accept=".json" style="display:none" onchange="importJSON(this)">
+    <button class="btn ghost sm" onclick="document.getElementById('imp').click()">⬆ RESTORE FROM JSON</button>
+    <button class="btn red sm" onclick="wipe()">WIPE ALL INCIDENTS</button>
+  </div>
+  <div class="card"><h2>Hypothesis library</h2><div id="hyplib"></div></div>
+</section>
+</main>
+
+<nav>
+  <button onclick="go('home')" id="n-home" class="active"><span>🏠</span>Home</button>
+  <button onclick="startInc()" id="n-cap"><span>⚠️</span>Incident</button>
+  <button onclick="go('ind')" id="n-ind"><span>📈</span>Indicators</button>
+  <button onclick="go('focus')" id="n-focus"><span>🎯</span>Focus</button>
+  <button onclick="go('set')" id="n-set"><span>⚙️</span>Setup</button>
+</nav>
+<div class="toast" id="toast"></div>
+
+<script>
+if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
+/* ===== TRAINING MODE ===== */
+const TRAIN=new URLSearchParams(location.search).get('mode')==='train';const KP=TRAIN?'train_':'';
+const LS={get:k=>localStorage.getItem(KP+k),set:(k,v)=>localStorage.setItem(KP+k,v)};
+const SCEN=(()=>{try{return JSON.parse(localStorage.getItem('train_scenario')||'null')}catch{return null}})();
+if(TRAIN){document.addEventListener('DOMContentLoaded',()=>{const h=document.querySelector('header');const b=document.createElement('div');b.style.cssText='position:fixed;top:0;left:0;right:0;z-index:30;background:#b03a2e;color:#fff;font-size:11px;text-align:center;padding:2px;letter-spacing:1px';b.textContent='TRAINING MODE — '+(SCEN?SCEN.title:'no scenario loaded');document.body.appendChild(b);h.style.paddingTop='calc(24px + env(safe-area-inset-top))';});}
+const notifyParent=(app,rec)=>{if(TRAIN&&window.parent!==window)window.parent.postMessage({type:'imss-saved',app,record:rec},'*');};
+/* ===== GOLD CODE — full control standard (descriptions only) ===== */
+const SECTIONS=[
+ {id:"1",name:"Fences",ctl:["Double/triple fence (wire/concrete/mesh)","Height 2.2–3 m","Distance between fences (15 m)","Inner fence construction","Outer fence construction","Vegetation cleared between fences 1–2","Vegetation cleared between fences 2–3","VMD coverage","Buildings ≥10 m from fence"]},
+ {id:"2",name:"Gates",ctl:["Height 2.2–3 m","Construction (wire/mesh)","Hinges secured","Gap gate-to-ground ≤10 mm","Air lock gate controlled","Sliding gate controlled","Plant service gate controlled","Conveyor crossover gate double-locked","Bullion gate double-locked","VMD coverage on high-risk gates","Locking devices graded"]},
+ {id:"3",name:"Plant surveillance",ctl:["CCTV coverage complete","Surveillance during power shutdown","24/7 monitoring","24/7 recording","Zone demarcation","Reaction procedures","Maintenance procedures","Integrated security management system","Security during breakdowns","VMD coverage","UPS installed","System access secured"]},
+ {id:"4",name:"Vehicle airlock",ctl:["Construction adequate","Airlock procedure applied","Removal / delivery control","Specimen signature control","Sample control","Clearance certificate","Security equipment (belly scope, radio, register, ladder)","Illumination","Key control","Interlocking","Traffic barriers","Searching"]},
+ {id:"5",name:"Locks",ctl:["Lock type adequate","Grade 3–5 minimum","Secured — 3 mm plate, hasp & staple, tamper covers","Locks inspected","Key control"]},
+ {id:"6/7",name:"Pipes & trenches",ctl:["Pipes secured at fence","Trenches secured"]},
+ {id:"10",name:"Conveyor belts",ctl:["Airlock secured","Access control at airlock","Theft by passing through prevented","Locks on airlock doors","Airlock key control","Return belt scrapers","Illumination","Searching procedure at airlock","CCTV surveillance"]},
+ {id:"11",name:"Security lights",ctl:["Sufficient lux level","No dark / shaded areas","Lights and cabling secured","Emergency lights / power"]},
+ {id:"12",name:"Access gate",ctl:["Entrance doors secured","Windows secured","Building secured","Key control","Access control system","Employee access control","Visitor access control","Permanent contractor control","Temporary contractor control","Personal equipment control (phones, firearms, tools)","Communications","Emergency reaction procedure","Restricted items control (contraband)","Metal / arc detector","Searching procedures","Security control facilities (transparent bags, cubicle, safes, lockers)"]},
+ {id:"13",name:"Electronic access control",ctl:["System type adequate","Access ID card control","ID card procedures","Internal door interlocking","UPS / generator"]},
+ {id:"14.1",name:"Mills",ctl:["Relining area demarcated with security present","Area access controlled","Pocketless overalls in use","Laundry done inside plant","Mill inlet under CCTV","Search during / after relining","Body cameras in use","Area inspected after maintenance / relining","Concentrates recycled","Spillage controlled — floors cleaned","Security informed of mill stoppages","High-grade sludge in secured area","Sumps sampled by security"]},
+ {id:"14.2",name:"Cyclone & feed pumps",ctl:["Sampling carried out","Spillages reported"]},
+ {id:"14.3",name:"Gravity concentrator (Knelson)",ctl:["Sampling points controlled / tank locked","Concentrator area secured (caged)","Gravity unit CCTV coverage","Catchment tank cage CCTV","Overflow pipe welded and under camera","Overflow box CCTV detail during cleaning","Cage locks graded, hinges secured","Overflow locks graded","Overflow spillage controlled (discharge cycle)"]},
+ {id:"15",name:"Spillage",ctl:["Crushers","Conveyors","Mill floor area","Mill outside area","Gravity catchment tank area","Thickeners","Screening — wood chips removed & sampled","Leach sumps","CIP/CIL bulk bags controlled","Carbon conditioning scrap controlled","Acid wash / elution sump","Eluant sump","Tailings sump","General housekeeping"]},
+ {id:"15a",name:"Carbon recovery & elution",ctl:["Security notified of recovery start / stop","Transfer under CCTV with VMD","Grab samples sealed, logged and witnessed","Screen cleanings / carbon fines secured and sampled","Recovery-screen run-off routed to secured sump","Carbon mass reconciled CIL → elution per recovery","Column drain valve locked when not in use","Two-person rule at recovery screen"]},
+ {id:"16.1",name:"Gold room — building",ctl:["Roof secured","Walls sound","Ceiling secured","Security doors","Floors sound","Ventilation openings secured","Sump routed back & inaccessible","French drains secured"]},
+ {id:"16.2",name:"Gold room — keys",ctl:["Key storage secured","Safe category 3","Steel construction","Double key / combination","Limited access","Content register","Key control","Duplicates controlled"]},
+ {id:"16.3",name:"Gold room — access control",ctl:["Employee access control","Visitor permits","Contractor permits","Clean / dirty change house","Searching facilities","Prohibited item control","Walk-through metal detector","Searching executed"]},
+ {id:"16.4",name:"Gold room — locks",ctl:["Security grade 6–7","Lock protectors","Key control by Met","Duplicate keys secured"]},
+ {id:"16.5",name:"Strong room / vault",ctl:["Category 4 vault","CCTV","Time lock","Movement sensors","Vibration detection","Fog protection","Double key / combination — codes not shared","Wall construction","Roof construction","Limited access","Content register","Key / combination code control","Safe category 3","Safe double key / combination","Safe limited access","Safe content register","Safe code control"]},
+ {id:"16.6",name:"Gold room — material control",ctl:["Airlock interlocked","Crushed slag sealed","Crushed crucible sealed","Tools limited","No acetylene","Welding controlled","Scrap sealed & escorted","Sample removal double-locked & escorted","Clearance certificates","Personal equipment in change room","Searching procedures"]},
+ {id:"16.7",name:"Electrowinning",ctl:["Cells double locked","Lock protectors","Drain valves locked","Sludge drained before reloading","Cathode baskets cleaned","Catchment tank sludge drained","Sludge filtered","Rectifiers locked"]},
+ {id:"16.7b",name:"Calcining",ctl:["Dust extractor","Double locked","Lock protectors","CCTV coverage","Dust collection double locked","Dust recovered on schedule"]},
+ {id:"16.8",name:"Gold room — surveillance",ctl:["CCTV coverage","PTZ cameras","Independent power","24/7 monitoring","24/7 recording","Zone demarcation","Reaction procedures","Maintenance procedures","Integrated system","Security during breakdowns","VMD coverage","UPS / generator","System access secured"]},
+ {id:"17",name:"Central control room",ctl:["Low-light cameras","PTZ / thermal","Black-screen monitoring","Body cameras","Control room access restricted","Fibre security","Radio links","Software current","Alarm display until acknowledged","Data retention ≥4 months","AI analytics","Access levels documented","UPS","Maintenance","Incident reporting","Two shift operators","Day-shift supervisor","Training & testing"]},
+ {id:"18",name:"Procedures",ctl:["Procedure exists and is current","Procedure executed as written","Owner assigned","Staff trained on procedure"]},
+ {id:"19",name:"Crime prevention & detection",ctl:["Informer network","Gold fingerprinting","Plant searches","Outside-plant searches"]}
+];
+/* ===== HYPOTHESIS LIBRARY — mechanism hypotheses, mapped to enabling sections ===== */
+const HYP=[
+ {id:"H1",t:"Concentrate removed at the Knelson overflow / catchment during cleaning",sec:["14.3","15"],collect:["Overflow-box CCTV for the cleaning window","Discharge-cycle log vs spillage volume","Sample grade at overflow box & catchment area","Lock / hinge inspection on cage and overflow"]},
+ {id:"H2",t:"Material leaves in a waste stream (wood chips, scrap, bulk bags, sweepings)",sec:["15","16.6"],collect:["Sample wood-chip and bulk-bag contents before removal","Waybill / scrap removal register for the window","Escort log and seal numbers on scrap containers"]},
+ {id:"H3",t:"Material taken during a mill stoppage or relining security was not told about",sec:["14.1","3"],collect:["Mill stop/start log vs security notification log","Sump grade immediately after restart","Relining search record and body-cam if any"]},
+ {id:"H4",t:"Gold-room material-control breach (unsealed slag / crucible / sample removal)",sec:["16.6","16.2","16.3"],collect:["Slag & crucible seal records","Clearance certificates for the window","Gold-room access log, airlock interlock log"]},
+ {id:"H5",t:"Electrowinning / calcine sludge route (drain valves, unfiltered sludge, dust)",sec:["16.7","16.7b"],collect:["Drain valve lock state and cell clean-up records","Sludge mass balance per clean-up","Calcine dust recovery record"]},
+ {id:"H6",t:"Exit through human-factor search (person search, airlock, conveyor pass-through)",sec:["12","4","10","16.3"],collect:["Search register for the window","Detector logs / random search ratio","Who was on search duty (role only)"]},
+ {id:"H7",t:"Perimeter or structural breach (fence, gate, roof, pipe, trench)",sec:["1","2","6/7","16.1"],collect:["VMD alarm log for the window","Fence / gate physical inspection","Roof / drain access inspection"]},
+ {id:"H8",t:"Insider collusion with security or control-room staff",sec:["3","17","19","13"],collect:["CCTV downtime vs incident window","Operator on duty and acknowledgement log","Access-level changes / override log"]},
+ {id:"H9",t:"Lock / key compromise",sec:["5","16.4","2","16.2"],collect:["Lock forensic inspection","Key register & duplicate control","Lock-breaking procedure records"]},
+ {id:"H10",t:"Loaded carbon or carbon fines diverted during recovery or screen cleaning",sec:["15a","15","16.6"],collect:["Recovery log (start/stop) vs security notification log","Grab-sample custody for the recovery","Carbon mass balance CIL → elution","CCTV of recovery screen during cleaning","Drain valve lock state"]},
+ {id:"H0",t:"No theft — metallurgical accounting variance or sampling error (null hypothesis)",sec:["*"],collect:["Gold-in-circuit reconciliation for the period","Assay QA/QC on the samples","Process upset log"]}
+];
+const PLANT=["Mill stopped / restarting","Relining or maintenance in progress","Knelson discharge / container change","Plant power outage","CCTV / NVR downtime","Shift change","Night shift","Rain / flooding","Contractor crew on site","Scrap / waste removal in progress","Carbon recovery to elution in progress"];
+const DEF={ops:["Operator 1","Operator 2"]};
+let S=JSON.parse(LS.get('imss_inc_settings')||'null')||DEF;
+let DB=JSON.parse(LS.get('imss_incidents')||'[]');
+const samples=()=>{try{return JSON.parse(LS.get('imss_samples')||'[]')}catch{return[]}};
+let step=1,gpsFix=null,photos=[],bar=[],roles=[];
+const $=id=>document.getElementById(id);
+const save=()=>{LS.set('imss_incidents',JSON.stringify(DB));LS.set('imss_inc_settings',JSON.stringify(S));};
+const nowLocal=()=>{const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,16);};
+const toast=m=>{const t=$('toast');t.textContent=m;t.style.display='block';setTimeout(()=>t.style.display='none',2200);};
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const sec=id=>SECTIONS.find(x=>x.id===id);
+const BAR={H:'Held',F:'Failed',B:'Bypassed',A:'Absent',X:'N/A'};
+
+function go(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));$('view-'+v).classList.add('active');document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));const n=$('n-'+v);if(n)n.classList.add('active');window.scrollTo(0,0);if(v==='home')renderHome();if(v==='ind')renderInd();if(v==='focus')fill($('f_inc'),DB.map(i=>i.id+' — '+i.cls),DB.map(i=>i.id));if(v==='set')renderSettings();}
+function fill(sel,arr,vals){sel.innerHTML=arr.map((a,i)=>`<option value="${esc(vals?vals[i]:a)}">${esc(a)}</option>`).join('');}
+function init(){fill($('m_op'),S.ops);$('m_op').value=LS.get('imss_inc_op')||S.ops[0];$('m_op').onchange=()=>LS.set('imss_inc_op',$('m_op').value);
+ const net=()=>{const n=$('net');n.textContent=navigator.onLine?'ONLINE':'OFFLINE';n.className='net '+(navigator.onLine?'on':'off');};net();addEventListener('online',net);addEventListener('offline',net);
+ renderHome();if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});}
+
+/* ---- home ---- */
+const sevPill=s=>`<span class="pill ${s[0]==='1'?'red':s[0]==='2'?'bad':s[0]==='3'?'warn':''}">S${s[0]}</span>`;
+function renderHome(){
+ const cut=Date.now()-30*864e5;
+ $('st_open').textContent=DB.filter(i=>i.status!=='Closed').length;$('st_30').textContent=DB.filter(i=>new Date(i.disc)>cut).length;
+ $('st_rec').textContent=Object.values(failCounts()).filter(n=>n>1).length;
+ const l=$('inclist');if(!DB.length){l.innerHTML='<p class="mut">None logged.</p>';return;}
+ l.innerHTML=[...DB].reverse().map(i=>`<div class="item" onclick="openDetail('${i.id}')"><div><div class="t">${esc(i.id)}</div><div class="s">${esc(i.cls)} · §${i.secId} ${esc(i.secName)} · ${i.disc.replace('T',' ')}</div><div>${sevPill(i.sev)} <span class="pill ${i.status==='Closed'?'ok':i.status==='Open'?'bad':'warn'}">${esc(i.status)}</span> ${i.hyps[0]?`<span class="pill brass">${i.hyps[0].id}</span>`:''}</div></div><div>›</div></div>`).join('');
+}
+function failCounts(){const o={};DB.forEach(i=>i.bar.forEach((v,k)=>{if(v&&v!=='H'&&v!=='X'){const key=`§${i.secId}|${sec(i.secId).ctl[k]}`;o[key]=(o[key]||0)+1;}}));return o;}
+
+/* ---- capture ---- */
+function startInc(){step=1;gpsFix=null;photos=[];roles=[];
+ fill($('c_sec'),SECTIONS.map(s=>`§${s.id} ${s.name}`),SECTIONS.map(s=>s.id));$('c_sec').value='14.3';
+ ['c_pdesc','c_narr','c_evref','c_recdesc','c_recseal','c_recwitrole'].forEach(i=>$(i).value='');['c_rec','c_recwit'].forEach(i=>$(i).checked=false);$('recbox').style.display='none';
+ $('c_from').value=$('c_to').value=$('c_disc').value=nowLocal();$('c_by').value=$('m_op').value;$('photos').innerHTML='';$('roles').innerHTML='';
+ $('plant').innerHTML=PLANT.map((p,i)=>`<div class="tick"><input type="checkbox" id="pl${i}"><div>${esc(p)}</div></div>`).join('');
+ $('gpsbox').textContent='Tap PIN to acquire GPS fix…';renderBarriers();setupSig('sig1');showStep();go('cap');$('n-cap').classList.add('active');pin();}
+function renderBarriers(){const s=sec($('c_sec').value);bar=s.ctl.map(()=>null);$('barhead').innerHTML=`Gold Code §${s.id} <b>${esc(s.name)}</b> — state of each barrier at the time of the incident.`;
+ $('barriers').innerHTML=s.ctl.map((c,i)=>`<div class="ctl"><div class="q">${esc(c)}</div><div class="seg" id="seg${i}">${Object.entries(BAR).map(([k,v])=>`<button onclick="setBar(${i},'${k}')">${v}</button>`).join('')}</div></div>`).join('');
+ fill($('c_keybar'),['— select —',...s.ctl],['',...s.ctl.map((_,i)=>String(i))]);
+ const cut=Date.now()-14*864e5;const rs=samples().filter(x=>x.secId===s.id&&new Date(x.date)>cut);
+ $('recentctl').innerHTML=rs.length?`<div class="linked"><b>Latest sample-app control state for §${s.id}</b> (${rs[rs.length-1].id}, ${rs[rs.length-1].date}): ${rs[rs.length-1].ctl.map((v,i)=>v==='N'?`<span class="pill bad">${esc(s.ctl[i]||'')}</span>`:'').join('')||'<span class="pill ok">no fails recorded</span>'}</div>`:'';
+ $('samplelinks').innerHTML=rs.length?rs.map(x=>`<div class="tick"><input type="checkbox" class="slink" value="${x.id}"><div><b>${esc(x.id)}</b> ${x.date} · ${esc(x.ptype)} · ${x.fails} fails${x.result?` · ${esc(x.result.value)} ${esc(x.result.unit)} — ${esc(x.result.grade)}`:''}</div></div>`).join(''):'<p class="mut">No sample records for this section on this device.</p>';}
+function setBar(i,v){bar[i]=v;const b=$('seg'+i).children;Object.keys(BAR).forEach((k,j)=>b[j].className=k===v?v:'');}
+function addRole(){const r=$('c_role').value,n=+$('c_rolen').value||1;roles.push([r,n]);$('roles').innerHTML=roles.map((x,i)=>`<span class="pill">${esc(x[0])} ×${x[1]} <span onclick="roles.splice(${i},1);addRole.r()">×</span></span>`).join('');$('c_rolen').value='';}
+addRole.r=()=>{$('roles').innerHTML=roles.map((x,i)=>`<span class="pill">${esc(x[0])} ×${x[1]} <span onclick="roles.splice(${i},1);addRole.r()">×</span></span>`).join('');};
+const NAMES=['','Classify','Barriers','Facts','Recovery','Hypotheses'];
+function showStep(){document.querySelectorAll('.step').forEach(e=>e.style.display=e.dataset.step==step?'block':'none');$('steps').innerHTML=[1,2,3,4,5].map(i=>`<div class="${i<step?'done':i==step?'cur':''}"></div>`).join('');$('stepname').textContent=`Step ${step} of 5 — ${NAMES[step]}`;window.scrollTo(0,0);if(step===5)$('hyppreview').innerHTML=renderHyps(deriveHyps(current()));}
+function nextStep(){
+ if(step===1&&!gpsFix&&!confirm('No GPS fix. Continue?'))return;
+ if(step===2){if(bar.some(v=>v===null)){toast('Mark every barrier');return;}if(!$('c_keybar').value){toast('Select the key barrier');return;}}
+ if(step===3&&!$('c_narr').value.trim()){toast('Facts required');return;}
+ step++;showStep();}
+function prevStep(){step--;showStep();}
+function pin(){$('gpsbox').innerHTML='Acquiring GPS…';if(!navigator.geolocation){$('gpsbox').textContent='GPS not available';return;}
+ if(TRAIN&&SCEN&&SCEN.gps){gpsFix={lat:SCEN.gps.lat,lon:SCEN.gps.lon,acc:5,ts:new Date().toISOString()};$('gpsbox').innerHTML=`<b>LAT</b> ${gpsFix.lat.toFixed(6)}<br><b>LON</b> ${gpsFix.lon.toFixed(6)}<br><b>ACC</b> ±5 m <span style="color:#E6C45A">(simulated)</span>`;return;}
+ navigator.geolocation.getCurrentPosition(p=>{gpsFix={lat:p.coords.latitude,lon:p.coords.longitude,acc:Math.round(p.coords.accuracy),ts:new Date().toISOString()};$('gpsbox').innerHTML=`<b>LAT</b> ${gpsFix.lat.toFixed(6)}<br><b>LON</b> ${gpsFix.lon.toFixed(6)}<br><b>ACC</b> ±${gpsFix.acc} m`;},e=>{$('gpsbox').textContent='GPS error: '+e.message;},{enableHighAccuracy:true,timeout:15000,maximumAge:0});}
+function addPhoto(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{const img=new Image();img.onload=()=>{const max=1200,sc=Math.min(1,max/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=img.width*sc;c.height=img.height*sc;const x=c.getContext('2d');x.drawImage(img,0,0,c.width,c.height);
+ const stamp=`${nextId()} · ${new Date().toLocaleString()} · ${gpsFix?gpsFix.lat.toFixed(5)+','+gpsFix.lon.toFixed(5):'NO GPS'} · IMSS AFRICA`;x.fillStyle='rgba(14,42,35,.78)';x.fillRect(0,c.height-30,c.width,30);x.fillStyle='#E6C45A';x.font='bold 15px Arial';x.fillText(stamp,8,c.height-10);photos.push(c.toDataURL('image/jpeg',.7));renderPhotos();};img.src=e.target.result;};r.readAsDataURL(f);inp.value='';}
+function renderPhotos(){$('photos').innerHTML=photos.map((p,i)=>`<div class="ph"><img src="${p}"><span onclick="photos.splice(${i},1);renderPhotos()">×</span></div>`).join('');}
+function nextId(){const d=new Date().toISOString().slice(2,10).replace(/-/g,'');return `INC-BIB-${d}-${String(DB.length+1).padStart(3,'0')}`;}
+const sigs={};
+function setupSig(id){const c=$(id);const r=c.getBoundingClientRect();c.width=(r.width||300)*2;c.height=280;const x=c.getContext('2d');x.scale(2,2);x.lineWidth=2;x.lineCap='round';x.strokeStyle='#0E2A23';let d=false;sigs[id]=false;const pos=e=>{const b=c.getBoundingClientRect();return[e.clientX-b.left,e.clientY-b.top];};
+ c.onpointerdown=e=>{d=true;const[a,b]=pos(e);x.beginPath();x.moveTo(a,b);};c.onpointermove=e=>{if(!d)return;const[a,b]=pos(e);x.lineTo(a,b);x.stroke();sigs[id]=true;};c.onpointerup=c.onpointerleave=()=>d=false;}
+function clearSig(id){const c=$(id);c.getContext('2d').clearRect(0,0,c.width,c.height);sigs[id]=false;}
+function current(){const s=sec($('c_sec').value);return{secId:s.id,bar:bar.slice(),keybar:$('c_keybar').value,plant:PLANT.filter((_,i)=>$('pl'+i)?.checked),rec:$('c_rec').checked,cls:$('c_class').value};}
+/* ---- hypothesis derivation ---- */
+function deriveHyps(inc){const s=sec(inc.secId);const failed=inc.bar.map((v,i)=>v&&v!=='H'&&v!=='X'?s.ctl[i]:null).filter(Boolean);const byp=inc.bar.filter(v=>v==='B').length;
+ return HYP.map(h=>{let sc=0;const why=[];
+  if(h.sec.includes(inc.secId)){sc+=3;why.push(`incident section §${inc.secId} is an enabling section`);}
+  if(h.sec.includes(inc.secId))failed.forEach(f=>{sc+=1;why.push(`barrier failed: ${f}`);});
+  if(inc.keybar!==''&&h.sec.includes(inc.secId)){sc+=1;}
+  if(h.id==='H3'&&inc.plant.some(p=>/Mill stopped|Relining/.test(p))){sc+=3;why.push('plant condition: mill stopped / relining');}
+  if(h.id==='H1'&&inc.plant.some(p=>/Knelson/.test(p))){sc+=3;why.push('plant condition: Knelson discharge / container change');}
+  if(h.id==='H8'&&inc.plant.some(p=>/CCTV|power outage/.test(p))){sc+=3;why.push('plant condition: CCTV / power down');}
+  if(h.id==='H2'&&inc.plant.some(p=>/Scrap/.test(p))){sc+=3;why.push('plant condition: waste removal in progress');}
+  if(h.id==='H6'&&inc.plant.some(p=>/Shift change/.test(p))){sc+=1;}
+  if(h.id==='H10'&&inc.plant.some(p=>/Carbon recovery/.test(p))){sc+=3;why.push('plant condition: carbon recovery in progress');}
+  if(h.id==='H8'&&byp){sc+=byp;why.push(`${byp} barrier(s) deliberately bypassed`);}
+  if(h.id==='H9'&&failed.some(f=>/lock|key/i.test(f))){sc+=2;why.push('lock / key barrier failed');}
+  if(h.id==='H0'){sc+= /variance/i.test(inc.cls)?4:(inc.rec?0:1);why.push(inc.rec?'material recovered — weakens null':'no material recovered — null remains open');}
+  return{id:h.id,t:h.t,score:sc,why,collect:h.collect};}).sort((a,b)=>b.score-a.score);}
+function renderHyps(hs){return hs.filter(h=>h.score>0).map((h,i)=>`<div class="hyp"><span class="sc">${h.score}</span><b>${h.id}</b> ${esc(h.t)}<br><span class="mut">${h.why.map(esc).join(' · ')}</span><ul>${h.collect.map(c=>`<li>${esc(c)}</li>`).join('')}</ul></div>`).join('')||'<p class="mut">No hypothesis triggered.</p>';}
+function saveInc(){if(!$('c_by').value.trim()){toast('Reporter required');return;}if(!sigs['sig1']){toast('Signature required');return;}
+ const s=sec($('c_sec').value);const c=current();const hyps=deriveHyps(c).filter(h=>h.score>0).map(h=>({id:h.id,score:h.score,why:h.why,collect:h.collect}));
+ const inc={schema:'imss.incident.v1',site:'Bibiani',id:nextId(),cls:$('c_class').value,sev:$('c_sev').value,from:$('c_from').value,to:$('c_to').value,disc:$('c_disc').value,op:$('m_op').value,gps:gpsFix,secId:s.id,secName:s.name,pdesc:$('c_pdesc').value,
+  bar:c.bar,keybar:c.keybar===''?null:s.ctl[+c.keybar],plant:c.plant,narr:$('c_narr').value,roles,evref:$('c_evref').value,samples:[...document.querySelectorAll('.slink:checked')].map(x=>x.value),photos,
+  recovered:c.rec?{desc:$('c_recdesc').value,seal:$('c_recseal').value,witnessed:$('c_recwit').checked,witrole:$('c_recwitrole').value}:null,
+  hyps,status:'Open',log:[{action:'Reported',by:$('c_by').value,ts:new Date().toISOString(),sig:$('sig1').toDataURL()}],created:new Date().toISOString()};
+ if(inc.recovered)inc.log.push({action:'Recovered material sealed',by:$('c_by').value,ts:inc.created,note:'Seal '+inc.recovered.seal+' → Security Evidence Room'});
+ DB.push(inc);save();notifyParent('incident',inc);toast('Saved '+inc.id);go('home');}
+
+/* ---- detail ---- */
+function openDetail(id){const i=DB.find(x=>x.id===id);if(!i)return;const s=sec(i.secId);
+ $('detail').innerHTML=`<div class="card"><h2>${esc(i.id)}</h2><div>${sevPill(i.sev)} <span class="pill">${esc(i.cls)}</span> <span class="pill ${i.status==='Closed'?'ok':'bad'}">${esc(i.status)}</span></div>
+ <p><b>§${i.secId} ${esc(i.secName)}</b>${i.pdesc?' · '+esc(i.pdesc):''}<br><span class="mut">Window ${i.from.replace('T',' ')} → ${i.to.replace('T',' ')} · discovered ${i.disc.replace('T',' ')} · ${esc(i.op)}</span></p>
+ <div class="gps">${i.gps?`${i.gps.lat.toFixed(6)}, ${i.gps.lon.toFixed(6)} ±${i.gps.acc} m`:'No GPS'}</div>
+ <p><b>Barriers:</b> ${i.bar.map((v,k)=>v&&v!=='H'&&v!=='X'?`<span class="pill ${v==='B'?'warn':'bad'}">${esc(s.ctl[k])} — ${BAR[v]}</span>`:'').join('')||'<span class="pill ok">all held</span>'}<br><b>Key barrier:</b> ${esc(i.keybar||'—')}</p>
+ <p><b>Plant conditions:</b> ${i.plant.map(p=>`<span class="pill">${esc(p)}</span>`).join('')||'—'}</p>
+ <p><b>Persons (role):</b> ${i.roles.map(r=>`${esc(r[0])} ×${r[1]}`).join(', ')||'—'}</p>
+ <p style="white-space:pre-wrap;font-size:14px">${esc(i.narr)}</p>
+ <p class="mut"><b>Evidence refs:</b> ${esc(i.evref)||'—'}<br><b>Linked samples:</b> ${i.samples.join(', ')||'—'}</p>
+ ${i.recovered?`<div class="linked"><b>Recovered:</b> ${esc(i.recovered.desc)} · Seal ${esc(i.recovered.seal)} · ${i.recovered.witnessed?'witnessed ('+esc(i.recovered.witrole)+')':'<span class="pill bad">unwitnessed</span>'}</div>`:''}
+ <div class="photos">${i.photos.map(p=>`<img src="${p}">`).join('')}</div></div>
+ <div class="card"><h2>Hypotheses (for analyst ACH)</h2>${renderHyps(i.hyps.map(h=>({...h,t:HYP.find(x=>x.id===h.id).t})))}</div>
+ <div class="card"><h2>Log</h2>${i.log.map((c,k)=>`<div class="coc"><b>${k+1}. ${esc(c.action)}</b> — ${esc(c.by)}<br><span class="mut">${c.ts.replace('T',' ').slice(0,16)} UTC ${c.note?'· '+esc(c.note):''}</span>${c.sig?`<br><img src="${c.sig}" style="height:36px">`:''}</div>`).join('')}
+ <hr><label>Add entry</label><select id="l_act"><option>Follow-up</option><option>Evidence handed over</option><option>Evidence received</option><option>Assay result</option><option>Control corrected</option><option>Referred to investigation</option><option>Referred to police</option><option>Closed — no further action</option></select>
+ <label>By (name, role)</label><input type="text" id="l_by"><label>Note</label><input type="text" id="l_note">
+ <label>Signature</label><canvas class="sig" id="sig2"></canvas><button class="btn ghost sm" onclick="clearSig('sig2')">Clear</button>
+ <label>Status</label><select id="l_status"><option>Open</option><option>Under investigation</option><option>Closed</option></select>
+ <button class="btn" onclick="addLog('${i.id}')">ADD ENTRY</button></div>
+ <button class="btn ghost" onclick="go('home')">◂ BACK</button><button class="btn red sm" onclick="delInc('${i.id}')">DELETE INCIDENT</button>`;
+ $('l_status').value=i.status;go('detail');setupSig('sig2');}
+function addLog(id){const i=DB.find(x=>x.id===id);if(!$('l_by').value.trim()){toast('Name required');return;}if(!sigs['sig2']){toast('Signature required');return;}
+ i.log.push({action:$('l_act').value,by:$('l_by').value,ts:new Date().toISOString(),note:$('l_note').value,sig:$('sig2').toDataURL()});i.status=$('l_status').value;if(i.status==='Closed')i.closed=new Date().toISOString();save();toast('Entry added');openDetail(id);}
+function delInc(id){if(!confirm('Delete '+id+'?'))return;DB=DB.filter(x=>x.id!==id);save();go('home');}
+
+/* ---- indicators ---- */
+function renderInd(){const sm=samples();
+ const rows=SECTIONS.map(s=>{const inc=DB.filter(i=>i.secId===s.id);const sp=sm.filter(x=>x.secId===s.id);if(!inc.length&&!sp.length)return null;
+  const fails=inc.reduce((k,i)=>k+i.bar.filter(v=>v&&v!=='H'&&v!=='X').length,0);const closed=inc.filter(i=>i.closed);const ttc=closed.length?Math.round(closed.reduce((k,i)=>k+(new Date(i.closed)-new Date(i.disc))/864e5,0)/closed.length):null;
+  const tested=sp.filter(x=>x.result?.value).sort((a,b)=>a.date<b.date?-1:1);let trend='—';if(tested.length>=2){const a=+tested[0].result.value,b=+tested[tested.length-1].result.value;trend=b>a*1.2?'▲ rising':b<a*0.8?'▼ falling':'→ flat';}
+  const sfails=sp.reduce((k,x)=>k+x.fails,0);
+  return{s,n:inc.length,open:inc.filter(i=>i.status!=='Closed').length,fails,ttc,trend,sp:sp.length,sfails,risk:inc.length*3+fails+sfails+(trend.startsWith('▲')?5:0)+(ttc>14?3:0)};}).filter(Boolean).sort((a,b)=>b.risk-a.risk);
+ $('indicators').innerHTML=rows.length?`<table><tr><th>§</th><th>Section</th><th>Incid.</th><th>Open</th><th>Barrier fails</th><th>Sample fails</th><th>Time-to-close</th><th>Grade trend</th></tr>${rows.map(r=>`<tr><td>${r.s.id}</td><td>${esc(r.s.name)}</td><td>${r.n}</td><td>${r.open}</td><td>${r.fails}</td><td>${r.sfails}</td><td>${r.ttc===null?'—':r.ttc+' d'}</td><td>${r.trend}</td></tr>`).join('')}</table><p class="mut">Ranked by composite risk. A section with recurring failures, slow closure and rising grade is where the next incident is forecast.</p>`:'<p class="mut">No data yet.</p>';
+ const fc=Object.entries(failCounts()).sort((a,b)=>b[1]-a[1]);
+ $('recur').innerHTML=fc.length?`<table><tr><th>Control</th><th>Times failed</th></tr>${fc.map(([k,n])=>`<tr><td>${esc(k.replace('|',' — '))}</td><td>${n>1?'<b style="color:#b03a2e">'+n+'</b>':n}</td></tr>`).join('')}</table>`:'<p class="mut">No failures recorded.</p>';}
+
+/* ---- investigation focus ---- */
+function buildFocus(){const i=DB.find(x=>x.id===$('f_inc').value);if(!i)return;const s=sec(i.secId);const sm=samples().filter(x=>i.samples.includes(x.id));
+ const prior=DB.filter(x=>x.id!==i.id&&x.secId===i.secId);const hyps=i.hyps.map(h=>({...h,t:HYP.find(x=>x.id===h.id).t,collect:HYP.find(x=>x.id===h.id).collect}));
+ $('focus').innerHTML=`<div class="card" style="border-top:6px solid #C9A227">
+ <div style="display:flex;justify-content:space-between"><div><div style="font-size:18px;font-weight:bold;color:#0E2A23;letter-spacing:1.5px">IMSS AFRICA</div><div style="color:#C9A227;font-size:11px;letter-spacing:1px">PLANT SECURITY INTELLIGENCE · CLIENT SITE: BIBIANI</div></div><div style="text-align:right;font-size:11px;color:#5f6b66">CONFIDENTIAL<br>${new Date().toLocaleString()}</div></div>
+ <h1 style="font-size:20px;color:#0E2A23;margin:16px 0 4px">INVESTIGATION FOCUS — ${esc(i.id)}</h1>
+ <div class="mut">${esc(i.cls)} · Severity ${i.sev[0]} · §${i.secId} ${esc(i.secName)} · window ${i.from.replace('T',' ')} → ${i.to.replace('T',' ')} · discovered ${i.disc.replace('T',' ')}</div><hr>
+ <h2>1. Bow-tie — barrier state</h2>
+ <table><tr><th>Barrier (Gold Code §${i.secId})</th><th>State</th></tr>${s.ctl.map((c,k)=>`<tr><td>${esc(c)}${i.keybar===c?' <span class="pill brass">KEY</span>':''}</td><td>${i.bar[k]==='H'?'<span class="pill ok">Held</span>':i.bar[k]==='X'?'N/A':`<span class="pill ${i.bar[k]==='B'?'warn':'bad'}">${BAR[i.bar[k]]}</span>`}</td></tr>`).join('')}</table>
+ <p><b>Plant conditions:</b> ${i.plant.join(', ')||'none recorded'}</p>
+ <h2 style="margin-top:14px">2. Competing hypotheses — ranked (pre-ACH)</h2>
+ <table><tr><th>#</th><th>Hypothesis</th><th>Score</th><th>Triggered by</th></tr>${hyps.map((h,k)=>`<tr><td>${k+1}</td><td><b>${h.id}</b> ${esc(h.t)}</td><td>${h.score}</td><td>${h.why.map(esc).join('; ')}</td></tr>`).join('')}</table>
+ <p class="mut">Scores reflect which vulnerabilities enable each mechanism; they are not probabilities. In Guardian's Hypothesis Workbench, rate each item of evidence Consistent / Inconsistent / N/A against every hypothesis, discard evidence consistent with all, and rank by least disconfirming evidence. The null hypothesis (H0) must be formally rejected, not ignored.</p>
+ <h2 style="margin-top:14px">3. Evidence held</h2>
+ <table><tr><th>Type</th><th>Reference</th></tr><tr><td>Facts</td><td style="white-space:pre-wrap">${esc(i.narr)}</td></tr><tr><td>Evidence refs</td><td>${esc(i.evref)||'—'}</td></tr>${sm.map(x=>`<tr><td>Sample</td><td>${esc(x.id)} · ${x.date} · ${esc(x.ptype)} · ${x.fails} control fails · ${x.result?esc(x.result.value+' '+x.result.unit+' — '+x.result.grade):'untested'} · custody ${x.coc.every(c=>c.sealOK)?'intact':'<b style="color:#b03a2e">exception</b>'}</td></tr>`).join('')}${i.recovered?`<tr><td>Recovered GBM</td><td>${esc(i.recovered.desc)} · seal ${esc(i.recovered.seal)} · ${i.recovered.witnessed?'witnessed':'<b style="color:#b03a2e">unwitnessed</b>'}</td></tr>`:''}<tr><td>Photos</td><td>${i.photos.length} stamped</td></tr></table>
+ <h2 style="margin-top:14px">4. Collection plan — what to obtain next</h2>
+ <ul style="font-size:13.5px;padding-left:18px">${[...new Set(hyps.slice(0,3).flatMap(h=>h.collect))].map(c=>`<li>${esc(c)}</li>`).join('')}<li>Plant data for the window: mill stop/start, Knelson cycle log, CCTV/NVR downtime, power log, shift roster, gold-room &amp; airlock access log, gold-in-circuit reconciliation</li></ul>
+ <h2 style="margin-top:14px">5. Recurrence</h2>
+ <p>${prior.length?`${prior.length} prior incident(s) in §${i.secId}: ${prior.map(p=>esc(p.id)).join(', ')}. Recurring failed controls: ${Object.entries(failCounts()).filter(([k,n])=>k.startsWith('§'+i.secId+'|')&&n>1).map(([k,n])=>esc(k.split('|')[1])+' ('+n+'×)').join('; ')||'none'}.`:'First recorded incident in this section.'}</p>
+ <h2 style="margin-top:14px">6. Analyst notes</h2><p style="white-space:pre-wrap;font-size:14px">${esc($('f_notes').value)||'<i>None.</i>'}</p>
+ <hr><div style="font-size:10px;color:#5f6b66">IMSS Africa · Client site: Bibiani Gold Mine · Confidential. Control standard: Gold Plant Risk &amp; Security Audit, P. van Schalkwyk — used with permission. Persons recorded by role only; identities held in Guardian Case Management under access control.</div></div>`;
+ window.scrollTo(0,$('focus').offsetTop-80);}
+
+/* ---- exports ---- */
+function dl(name,txt,type='text/plain'){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type}));a.download=name;a.click();}
+function exportGuardian(){const sm=samples();const linked=new Set(DB.flatMap(i=>i.samples));
+ dl(`imss-bibiani-guardian-${new Date().toISOString().slice(0,10)}.json`,JSON.stringify({schema:'imss.package.v1',tenant:'IMSS',site:'Bibiani',exported:new Date().toISOString(),ontology:{standard:'Gold Plant Risk & Security Audit (P. van Schalkwyk)',sections:SECTIONS},hypothesis_library:HYP,incidents:DB,samples:sm.filter(x=>linked.has(x.id))}),'application/json');}
+function exportCSV(){const h=['id','class','severity','status','from','to','discovered','operator','lat','lon','section','section_name','point','barriers_failed','barriers_bypassed','barriers_absent','key_barrier','plant_conditions','roles','linked_samples','recovered','top_hypothesis','log_entries'];
+ const rows=DB.map(i=>{const s=sec(i.secId);const f=k=>i.bar.map((v,j)=>v===k?s.ctl[j]:'').filter(Boolean).join('; ');return[i.id,i.cls,i.sev[0],i.status,i.from,i.to,i.disc,i.op,i.gps?.lat??'',i.gps?.lon??'',i.secId,i.secName,i.pdesc,f('F'),f('B'),f('A'),i.keybar||'',i.plant.join('; '),i.roles.map(r=>r[0]+' x'+r[1]).join('; '),i.samples.join('; '),i.recovered?i.recovered.desc+' seal '+i.recovered.seal:'',i.hyps[0]?.id||'',i.log.length].map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',');});
+ dl('bibiani-incidents.csv',[h.join(','),...rows].join('\n'),'text/csv');}
+function exportGeo(){dl('bibiani-incidents.geojson',JSON.stringify({type:'FeatureCollection',features:DB.filter(i=>i.gps).map(i=>({type:'Feature',geometry:{type:'Point',coordinates:[i.gps.lon,i.gps.lat]},properties:{id:i.id,class:i.cls,severity:+i.sev[0],section:i.secId,status:i.status,top:i.hyps[0]?.id||null,discovered:i.disc}}))},null,1),'application/geo+json');}
+function importJSON(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{try{const o=JSON.parse(e.target.result);const arr=o.incidents||[];const ids=new Set(DB.map(x=>x.id));arr.forEach(x=>{if(!ids.has(x.id))DB.push(x)});save();toast('Restored '+arr.length);go('home');}catch{toast('Invalid file')}};r.readAsText(f);}
+function renderSettings(){$('s_ops').value=S.ops.join('\n');$('hyplib').innerHTML=HYP.map(h=>`<div class="hyp"><b>${h.id}</b> ${esc(h.t)}<br><span class="mut">Enabling sections: ${h.sec.join(', ')}</span></div>`).join('');}
+function saveSettings(){S.ops=$('s_ops').value.split('\n').map(x=>x.trim()).filter(Boolean);save();fill($('m_op'),S.ops);toast('Saved');}
+function wipe(){if(confirm('Wipe ALL incidents on this device? Export first.')&&confirm('Really wipe?')){DB=[];save();go('home');}}
+init();
+</script>
+</body>
+</html>

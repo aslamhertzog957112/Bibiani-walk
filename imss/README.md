@@ -1,26 +1,25 @@
-# IMSS Africa — Bibiani Plant Sample Capture (Rev B)
+# IMSS Academy — Mining Security School of Excellence (Rev A)
 
-Offline iPhone home-screen web app. Client site: Bibiani Gold Mine.
-Control standard: Gold Plant Risk & Security Audit (P. van Schalkwyk) — used with permission. Control *descriptions* only are embedded; no other site's findings or comments are carried.
+Offline training simulator. Deploy to `Bibiani-walk/imss/academy/`:
+academy.html · sw.js · manifest.json · icon.svg · icon-180.png · icon-192.png · icon-512.png · README.md
 
-## Files
-samples.html · sw.js · manifest.json · icon.svg · README.md
-Drop into the GitHub Pages repo (own folder, e.g. /imss/), open once in Safari online, Share → Add to Home Screen.
+URL: https://aslamhertzog957112.github.io/Bibiani-walk/imss/academy/academy.html
 
-## IMSS Africa brand tokens
-Forest  #0E2A23 (primary)  ·  Forest-2 #17453A
-Brass   #C9A227 (accent)   ·  Brass-2  #E6C45A
-Sand    #F4F1EA (background)
-Font: Arial. Mark: brass shield with forest inner shield and a brass "M" + point (SVG in header and icon.svg).
+## How it works
+The Academy does not re-implement the apps. Each operational app has a training mode (`?mode=train`):
+separate `train_` storage keys, GPS taken from the scenario, photos optional, red TRAINING banner.
+Drill → Academy loads the scenario, opens the real app in training mode in a frame, trainee works in the
+genuine interface, saves → the app posts the record back → Academy scores it against the answer key.
 
-## Operative flow
-1. GPS pin → Gold Code section (14.1 Mills, 14.2 Cyclone & feed pumps, 14.3 Gravity concentrator, 15 Spillage, 10 Conveyors, 16.6 GR material control, 16.7 Electrowinning, 16.7b Calcining, 5 Locks, 6/7 Pipes & trenches) → point type
-2. Control checklist for that section — every item marked ✓ Compliant / ✗ Fail / N/A — plus threat indicators
-3. Photos (min 2, stamped)
-4. Material class → route to / test / priority → mass, container, seal, witness
-5. Collector signature
+## Tabs
+Home (trainee + standing) · Learn (modules per level, app walkthroughs) · Drill (14 seed scenarios:
+5 sampling, 5 incident, 4 field-assessment scoring) · Test (34-item MCQ bank by module; 80% pass, 90% for F-04)
+· Register (records, certification, decay triggers, certificate print, Guardian export) · Author (L5: JSON scenarios/MCQ, library import/export)
 
-Handovers and test results are added from the sample record. AAR reports section compliance %, control failures, results, typology weighting, custody integrity and training points. CSV / GeoJSON / JSON export.
+Certification auto-issues when, within 90 days, the trainee passes the required number of distinct drills for their level
+(L1 2, L2 4, L3 3, L4 2, L5 2) and either a full-bank test or three module tests. Validity 12 months (L1–L3), 24 months (L4–L5).
+Decay trigger: two consecutive drill scores below 70%.
 
-## Before go-live
-Confirm MC-1…MC-7 "route to" destinations against the Bibiani lab / gold-room SOP (Setup tab).
+## Install
+Android: Chrome → open the URL → ⋮ → "Install app". iPhone: Safari → Share → Add to Home Screen.
+Open once online; allow Location and Camera. Works offline afterwards.

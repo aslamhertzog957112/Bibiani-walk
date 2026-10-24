@@ -8,6 +8,7 @@
 <meta name="apple-mobile-web-app-title" content="IMSS Samples">
 <meta name="theme-color" content="#0E2A23">
 <link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
 <title>IMSS Africa — Bibiani Plant Sample Capture</title>
 <style>
 :root{--g:#0E2A23;--g2:#17453A;--brass:#C9A227;--brass2:#E6C45A;--sand:#F4F1EA;--card:#fff;--txt:#141414;--mut:#5f6b66;--ok:#1e8449;--warn:#b7791f;--bad:#b03a2e;--line:#dde3df}
@@ -214,6 +215,13 @@ hr{border:0;border-top:1px solid var(--line);margin:10px 0}
 <div class="toast" id="toast"></div>
 
 <script>
+if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
+/* ===== TRAINING MODE ===== */
+const TRAIN=new URLSearchParams(location.search).get('mode')==='train';const KP=TRAIN?'train_':'';
+const LS={get:k=>localStorage.getItem(KP+k),set:(k,v)=>localStorage.setItem(KP+k,v)};
+const SCEN=(()=>{try{return JSON.parse(localStorage.getItem('train_scenario')||'null')}catch{return null}})();
+if(TRAIN){document.addEventListener('DOMContentLoaded',()=>{const h=document.querySelector('header');const b=document.createElement('div');b.style.cssText='position:fixed;top:0;left:0;right:0;z-index:30;background:#b03a2e;color:#fff;font-size:11px;text-align:center;padding:2px;letter-spacing:1px';b.textContent='TRAINING MODE — '+(SCEN?SCEN.title:'no scenario loaded');document.body.appendChild(b);h.style.paddingTop='calc(24px + env(safe-area-inset-top))';});}
+const notifyParent=(app,rec)=>{if(TRAIN&&window.parent!==window)window.parent.postMessage({type:'imss-saved',app,record:rec},'*');};
 /* ===== GOLD CODE CONTROL STANDARD (sampling-relevant sections) ===== */
 const SECTIONS = [
  {id:"14.1",name:"Mills",ctl:["Relining/maintenance area demarcated with security present","Area access controlled","Pocketless overalls in use","Laundry done inside plant","Mill inlet under CCTV surveillance","Search conducted during / after relining","Body cameras in use","Area inspected by security after maintenance / relining","Concentrates recycled (not left in mill)","Spillage controlled — mill floors cleaned","Security informed of mill stoppages","High-grade sludge held in a secured area","Sumps sampled by security"]},
@@ -221,6 +229,7 @@ const SECTIONS = [
  {id:"14.3",name:"Gravity concentrator (Knelson)",ctl:["Sampling points controlled / tank locked","Concentrator area secured (caged)","Gravity unit under adequate CCTV coverage","Concentrate catchment tank cage under CCTV","Overflow pipe secured (welded, not flanged) and under camera","Overflow box CCTV gives detailed view during cleaning","Cage locks graded, hinges secured","Overflow locks graded, not easily accessible","Overflow spillage controlled (discharge cycle managed)"]},
  {id:"15",name:"Spillage",ctl:["Crushers — spillage controlled","Conveyors — spillage controlled","Mill floor area — clean","Mill outside area — clean","Gravity catchment tank area — no overflow","Thickeners — no spillage","Screening — wood chips removed frequently and sampled","Leach sumps — clean","CIP/CIL — spillage / bulk bags controlled","Carbon conditioning — spillage / scrap controlled","Acid wash / elution column sump — clean","Eluant sump — clean","Tailings sump — clean","General roads / open areas — housekeeping good"]},
  {id:"10",name:"Conveyor belts",ctl:["Airlock secured (two gates)","Access control at airlock","Theft by passing through prevented","Locks on airlock doors","Airlock key control","Return belt scrapers installed","Illumination adequate","Searching procedure applied at airlock","CCTV surveillance"]},
+ {id:"15a",name:"Carbon recovery & elution",ctl:["Security notified of recovery start / stop","Transfer under CCTV with VMD","Grab samples sealed, logged and witnessed","Screen cleanings / carbon fines secured and sampled","Recovery-screen run-off routed to secured sump","Carbon mass reconciled CIL → elution per recovery","Column drain valve locked when not in use","Two-person rule at recovery screen"]},
  {id:"16.6",name:"Gold room — material control",ctl:["Airlock doors interlocked","Crushed slag sealed","Crushed crucible sealed","Tools and equipment limited","No acetylene bottles in gold room","Welding machine controlled","Scrap / refuse sealed and removed under escort","Sample removal double-locked under security escort","Clearance certificates in place","Personal equipment remains in change room","Searching procedures applied"]},
  {id:"16.7",name:"Electrowinning",ctl:["Cells double locked","Lock protectors fitted","Drain valves locked","Sludge drained before cathode reloading","Cathode baskets cleaned immediately","Sludge drained from catchment tanks","Sludge filtered (not only decanted)","Rectifiers locked"]},
  {id:"16.7b",name:"Calcining",ctl:["Furnace dust extractor installed","Double locked","Lock protectors fitted","CCTV coverage","Dust collection double locked","Dust recovered on schedule"]},
@@ -241,11 +250,11 @@ const DEF = {
  ],
  checks:[["Visible gold / dark heavy fines in material","High-grade indicator"],["Fresh spillage or recently disturbed surface","Recency"],["Material accumulated beyond normal build-up","Caching opportunity"],["Containers, bags or bottles near point","Collection means"],["Tools present (scoops, trowels, pans, magnets)","Collection means"],["Drain / launder diverted, blocked or modified","Diversion method"],["Seal, grate, lid or guard tampered / missing","Access control breach"],["Unauthorised person at or near point","Insider / access"],["Point in CCTV blind spot","Surveillance gap"],["Point within 20 m of exit, fence or road","Exfiltration route"],["Evidence of panning / washing","Processing on-site"],["Repeat site (sampled before)","Pattern"]]
 };
-let S=JSON.parse(localStorage.getItem('imss_settings')||'null')||JSON.parse(JSON.stringify(DEF));
-let DB=JSON.parse(localStorage.getItem('imss_samples')||'[]');
+let S=JSON.parse(LS.get('imss_settings')||'null')||JSON.parse(JSON.stringify(DEF));
+let DB=JSON.parse(LS.get('imss_samples')||'[]');
 let cur=null,step=1,gpsFix=null,photos=[],ctlState=[];
 const $=id=>document.getElementById(id);
-const save=()=>{localStorage.setItem('imss_samples',JSON.stringify(DB));localStorage.setItem('imss_settings',JSON.stringify(S));};
+const save=()=>{LS.set('imss_samples',JSON.stringify(DB));LS.set('imss_settings',JSON.stringify(S));};
 const today=()=>new Date().toISOString().slice(0,10);
 const toast=m=>{const t=$('toast');t.textContent=m;t.style.display='block';setTimeout(()=>t.style.display='none',2200);};
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -254,10 +263,10 @@ const sec=id=>SECTIONS.find(x=>x.id===id);
 function go(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));$('view-'+v).classList.add('active');document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));const n=$('n-'+v);if(n)n.classList.add('active');window.scrollTo(0,0);if(v==='home')renderHome();if(v==='map')drawMap();if(v==='set')renderSettings();if(v==='aar'){$('a_from').value=$('a_from').value||today();$('a_to').value=$('a_to').value||today();}}
 function fill(sel,arr,vals){sel.innerHTML=arr.map((a,i)=>`<option value="${esc(vals?vals[i]:a)}">${esc(a)}</option>`).join('');}
 function init(){
- $('m_date').value=localStorage.getItem('imss_mdate')||today();
- fill($('m_op'),S.ops);$('m_op').value=localStorage.getItem('imss_mop')||S.ops[0];
- $('m_ref').value=localStorage.getItem('imss_mref')||'';
- ['m_date','m_op','m_ref'].forEach(id=>$(id).addEventListener('change',()=>{localStorage.setItem('imss_mdate',$('m_date').value);localStorage.setItem('imss_mop',$('m_op').value);localStorage.setItem('imss_mref',$('m_ref').value);}));
+ $('m_date').value=LS.get('imss_mdate')||today();
+ fill($('m_op'),S.ops);$('m_op').value=LS.get('imss_mop')||S.ops[0];
+ $('m_ref').value=LS.get('imss_mref')||'';
+ ['m_date','m_op','m_ref'].forEach(id=>$(id).addEventListener('change',()=>{LS.set('imss_mdate',$('m_date').value);LS.set('imss_mop',$('m_op').value);LS.set('imss_mref',$('m_ref').value);}));
  const net=()=>{const n=$('net');n.textContent=navigator.onLine?'ONLINE':'OFFLINE';n.className='net '+(navigator.onLine?'on':'off');};net();addEventListener('online',net);addEventListener('offline',net);
  renderHome();
  if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
@@ -290,7 +299,7 @@ function showStep(){document.querySelectorAll('.step').forEach(e=>e.style.displa
 function nextStep(){
  if(step===1&&!gpsFix){if(!confirm('No GPS fix yet. Continue without coordinates?'))return;}
  if(step===2&&ctlState.some(v=>v===null)){toast('Mark every control item');return;}
- if(step===3&&photos.length<2){toast('Minimum 2 photos required');return;}
+ if(step===3&&photos.length<2&&!TRAIN){toast('Minimum 2 photos required');return;}
  if(step===4){if(!$('c_seal').value.trim()){toast('Seal number required');return;}if(!$('c_sealed').checked){toast('Confirm seal applied');return;}}
  step++;showStep();
 }
@@ -298,6 +307,7 @@ function prevStep(){step--;showStep();}
 function pin(){
  $('gpsbox').innerHTML='Acquiring GPS…';
  if(!navigator.geolocation){$('gpsbox').textContent='GPS not available';return;}
+ if(TRAIN&&SCEN&&SCEN.gps){gpsFix={lat:SCEN.gps.lat,lon:SCEN.gps.lon,acc:5,ts:new Date().toISOString()};$('gpsbox').innerHTML=`<b>LAT</b> ${gpsFix.lat.toFixed(6)}<br><b>LON</b> ${gpsFix.lon.toFixed(6)}<br><b>ACC</b> ±5 m <span style="color:#E6C45A">(simulated)</span>`;return;}
  navigator.geolocation.getCurrentPosition(p=>{gpsFix={lat:p.coords.latitude,lon:p.coords.longitude,acc:Math.round(p.coords.accuracy),alt:p.coords.altitude,ts:new Date().toISOString()};
   $('gpsbox').innerHTML=`<b>LAT</b> ${gpsFix.lat.toFixed(6)}<br><b>LON</b> ${gpsFix.lon.toFixed(6)}<br><b>ACC</b> ±${gpsFix.acc} m ${gpsFix.acc>15?'<span style="color:#f99">(poor — re-pin in open sky)</span>':'<span style="color:#9f9">OK</span>'}<br><b>UTC</b> ${gpsFix.ts.slice(11,19)}`;
  },e=>{$('gpsbox').textContent='GPS error: '+e.message+' — tap PIN to retry';},{enableHighAccuracy:true,timeout:15000,maximumAge:0});
@@ -326,7 +336,7 @@ function saveSample(){
   gps:gpsFix,secId:sc.id,secName:sc.name,ptype:$('c_ptype').value,pdesc:$('c_pdesc').value,ctl:ctlState.slice(),fails:ctlState.filter(v=>v==='N').length,checks,flags:checks.filter(Boolean).length,notes:$('c_notes').value,photos,
   code:code[0],codeDesc:code[1],dest:code[2],test:code[3],prio:code[4],mass:$('c_mass').value,cont:$('c_cont').value,seal:$('c_seal').value,sealed:$('c_sealed').checked,witness:$('c_witness').checked,witname:$('c_witname').value,
   coc:[{action:'Collected & sealed',by:$('c_cby').value,ts:new Date().toISOString(),sig:$('sig1').toDataURL(),sealOK:true,note:'Seal '+$('c_seal').value}],result:null};
- DB.push(s);save();toast('Saved '+s.id);go('home');
+ DB.push(s);save();notifyParent('samples',s);toast('Saved '+s.id);go('home');
 }
 
 function openDetail(id){
